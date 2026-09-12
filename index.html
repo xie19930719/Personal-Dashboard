@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Dashboard</title>
+
+    <!-- Open Graph Meta Tags for Link Preview Protection (LINE & FB) -->
+    <meta property="og:title" content="Personal Dashboard" />
+    <meta property="og:description" content="Private Personal Life OS" />
+    <meta property="og:type" content="website" />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        muji: {
+                            bg: '#F7F5F0',          // 溫暖無印麻質米色底
+                            card: '#FFFFFF',        // 純白質感卡片
+                            cardWarm: '#FAF8F4',    // 溫潤米白次卡片
+                            text: '#2C2B29',        // 深木炭暖灰
+                            dark: '#282523',        // 深焦木色
+                            accent: '#F5B800',      // 溫潤木金/大地黃
+                            k90: '#222222',         // K90 深灰色 Hero 焦點
+                            k90Hover: '#000000',    // K90 懸浮純黑
+                            k90Soft: '#EAE8E3',     // K90 淺灰背景
+                            k90Inner: '#171717',    // K90 內層更深灰卡片
+                            muted: '#8C867E',       // 亞麻灰/次要文字
+                            border: '#E5E0D8',      // 柔和自然邊框
+                            pill: '#EFECE6',        // 溫暖淺沙色標籤/按鈕
+                            redSoft: '#FDF2F0',     // 警示軟紅
+                            redLight: '#C83B2B',    // 警示文字紅
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', '"Inter"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 8px 24px -4px rgba(44, 43, 41, 0.04), 0 2px 6px -1px rgba(44, 43, 41, 0.02)',
+                        'floating': '0 16px 36px -8px rgba(44, 43, 41, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            background-color: #F7F5F0;
+            color: #2C2B29;
+            -webkit-font-smoothing: antialiased;
+        }
+        .smooth-transition {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(140, 134, 126, 0.25);
+            border-radius: 99px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(140, 134, 126, 0.45);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-6 lg:p-10">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Header Row -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 py-2">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-3xl font-black tracking-tight text-muji-text">こんにちは</span>
+                    <span class="text-2xl animate-bounce">👋</span>
+                </div>
+                <p id="subGreetingText" class="text-xs sm:text-sm font-medium text-muji-muted">
+                    今天也是充實美好的一天，保持節奏加油！ ✨
+                </p>
+                <div class="flex items-center gap-3 mt-3">
+                    <span id="clockText" class="text-lg font-black font-mono tracking-tight text-muji-text bg-muji-card px-3.5 py-1 rounded-xl border border-muji-border shadow-soft">00:00:00</span>
+                    <span id="fullDateText" class="text-xs font-semibold text-muji-muted">2026年 9月 4日 星期五</span>
+                    
+                    <button onclick="lockDashboard()" class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl text-xs font-bold bg-muji-card text-muji-text hover:bg-muji-pill border border-muji-border shadow-soft smooth-transition ml-auto md:ml-0" title="鎖定儀表板">
+                        <i class="fas fa-lock text-xs"></i> 鎖定
+                    </button>
+                </div>
+            </div>
+
+            <!-- Header Weather & Info Widget -->
+            <div class="bg-muji-pill border border-muji-border p-6 rounded-[28px] shadow-soft w-full md:w-80 h-44 flex flex-col justify-between relative overflow-hidden">
+                <div class="flex items-start justify-between">
+                    <span class="text-xs font-bold tracking-wider text-muji-muted font-mono uppercase">MUJI UI</span>
+                    <div id="weatherCircleIcon" class="w-13 h-13 rounded-full bg-[#EAD8AD] flex items-center justify-center text-2xl shadow-sm text-muji-text flex-shrink-0">
+                        ☀️
+                    </div>
+                </div>
+
+                <div class="flex items-end justify-between">
+                    <div class="flex gap-4 pb-1">
+                        <div>
+                            <span class="text-[11px] font-medium text-muji-muted block">相對濕度</span>
+                            <span id="widgetHumidity" class="text-xs font-extrabold font-mono text-muji-text">-- %</span>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-medium text-muji-muted block">紫外線</span>
+                            <span id="widgetUV" class="text-xs font-extrabold font-mono text-muji-text">--</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <span id="widgetApparentTemp" class="text-5xl font-black font-mono tracking-tighter text-muji-text leading-none">--</span>
+                        <span class="text-base font-bold text-muji-text font-mono ml-0.5 leading-none">°C</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN DASHBOARD GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- 1. Course Focus -->
+            <div class="lg:col-span-6">
+                <div class="bg-muji-k90 text-white p-7 rounded-[32px] shadow-floating relative overflow-hidden space-y-6">
+                    <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <div class="flex items-center justify-between border-b border-white/20 pb-4">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+                            <h2 class="text-lg font-extrabold tracking-tight">
+                                <span class="text-white">Course</span>
+                                <span class="text-white/60 font-light ml-1">Focus</span>
+                            </h2>
+                        </div>
+                        <span id="focusTaskCategory" class="text-[11px] font-semibold bg-white/20 px-3 py-1 rounded-full text-white border border-white/20">
+                            近期課程
+                        </span>
+                    </div>
+
+                    <div class="bg-muji-k90Inner p-5 rounded-2xl border border-white/15 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-white/70 font-mono" id="focusTaskDueDate">📅 載入最近課程中...</span>
+                            <span class="w-2 h-2 rounded-full bg-muji-accent"></span>
+                        </div>
+                        <h3 id="focusTaskTitle" class="text-lg font-bold text-white tracking-tight leading-snug">
+                            載入近期課程資訊...
+                        </h3>
+                        <p id="focusTaskDesc" class="text-xs text-white/80 leading-relaxed whitespace-pre-line">
+                            即時連動右側課表行程。
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 text-xs text-white/80">
+                        <div class="flex items-center gap-2">
+                            <i class="far fa-calendar-alt text-muji-accent text-sm"></i>
+                            <span>即時連動課表行程</span>
+                        </div>
+                        <span class="text-[10px] font-mono bg-white/20 px-2.5 py-1 rounded-lg text-white font-bold">NEXT CLASS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 課程月曆 -->
+            <div class="lg:col-span-6">
+                <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-5">
+                    
+                    <div class="flex items-center justify-between border-b border-muji-border pb-3">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-extrabold text-lg tracking-tight text-muji-text">課程月曆</h3>
+                            <span class="text-xs text-muji-muted font-normal">Schedule</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="prevMonth()" class="w-8 h-8 rounded-full bg-muji-pill hover:bg-muji-border flex items-center justify-center text-xs text-muji-text smooth-transition">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span id="calendarMonthYearLabel" class="text-xs font-bold font-mono tracking-tight text-muji-text">2026 年 9 月</span>
+                            <button onclick="nextMonth()" class="w-8 h-8 rounded-full bg-muji-pill hover:bg-muji-border flex items-center justify-center text-xs text-muji-text smooth-transition">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold text-muji-muted mb-1">
+                        <div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div class="text-muji-text/70">六</div><div class="text-muji-text/70">日</div>
+                    </div>
+
+                    <div id="calendarGrid" class="grid grid-cols-7 gap-y-2 gap-x-0 text-center text-xs font-medium">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div id="selectedDateInfo" class="bg-muji-pill p-4 rounded-2xl border border-muji-border space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span id="selectedDateText" class="text-xs font-bold text-muji-text">📅 當日課程清單</span>
+                            <span class="text-[10px] font-semibold bg-muji-card px-2.5 py-0.5 rounded-full text-muji-text border border-muji-border">當日課程</span>
+                        </div>
+                        <div id="selectedDateCourses" class="space-y-1.5 pt-1">
+                            <!-- Course details -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 機車保養紀錄 -->
+            <div class="lg:col-span-6">
+                <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-5">
+                    <div class="border-b border-muji-border pb-3 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <h2 class="text-xl font-extrabold tracking-tight">
+                                    <span class="text-muji-text">機車保養紀錄</span>
+                                    <span class="text-muji-muted font-light text-base ml-1">RX110</span>
+                                </h2>
+                            </div>
+                            
+                            <button onclick="openMotoModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-muji-k90 text-white hover:bg-black smooth-transition shadow-sm">
+                                <i class="fas fa-plus text-[10px]"></i> 新增紀錄
+                            </button>
+                        </div>
+
+                        <!-- 機車保養紀錄同步時間戳記 -->
+                        <div class="flex items-center justify-between text-[11px] text-muji-muted pt-0.5">
+                            <div class="flex items-center gap-1.5">
+                                <i class="far fa-clock text-xs"></i>
+                                <span>最後更新時間：<span id="motoSyncTimeText" class="font-mono font-medium text-muji-text">讀取中...</span></span>
+                            </div>
+                            <button onclick="fetchMotoRecordsFromCloud()" class="inline-flex items-center gap-1 text-[11px] font-bold text-muji-muted hover:text-muji-text smooth-transition py-0.5 px-2 rounded-lg hover:bg-muji-pill">
+                                <i class="fas fa-rotate text-[10px]"></i> 重新整理
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-muji-k90 text-white p-5 rounded-[24px] shadow-sm flex items-center justify-between relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+                        <div class="flex items-center gap-3.5 relative z-10">
+                            <div class="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur-sm text-white flex items-center justify-center text-sm border border-white/20">
+                                <i class="fas fa-gauge-high"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-medium text-white/80">目前總里程</p>
+                                <p class="text-xl font-black font-mono tracking-tight leading-tight text-white">
+                                    <span id="motoCurrentMileage">--</span> <span class="text-xs font-sans text-white/80 font-normal">km</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right relative z-10">
+                            <p class="text-[11px] font-medium text-white/80">距上次保養已過</p>
+                            <p class="text-base font-extrabold text-white"><span id="motoDaysSince" class="text-lg">--</span> 天</p>
+                        </div>
+                    </div>
+
+                    <div id="motoListContainer" class="space-y-2.5">
+                        <div class="text-center py-6 text-muji-muted text-xs">載入紀錄中...</div>
+                    </div>
+                    
+                    <button id="motoViewAllBtn" onclick="toggleMotoRecords()" class="w-full py-2.5 rounded-2xl bg-muji-pill text-xs font-bold text-muji-text hover:bg-muji-border smooth-transition hidden">
+                        查看全部紀錄
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. 庫存股票市值 -->
+            <div class="lg:col-span-6">
+                <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-5">
+                    <div class="flex items-center justify-between border-b border-muji-border pb-3">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-extrabold text-lg tracking-tight text-muji-text">庫存股票市值</h3>
+                            <span class="text-xs text-muji-muted font-normal">Portfolio</span>
+                        </div>
+                        <!-- 同步成功才顯示 -->
+                        <span id="stockSyncStatusBadge" class="hidden text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full items-center gap-1">
+                            <i class="fas fa-cloud-arrow-up text-[10px]"></i> 已同步 Google 試算表
+                        </span>
+                    </div>
+
+                    <div id="stockSummaryCard" class="bg-muji-k90 text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition">
+                        <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                        <div>
+                            <p class="text-xs text-white/80 font-medium mb-1">您的股票投資組合預估總市值</p>
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-base font-bold text-white/90 font-mono">NT$</span>
+                                <span id="stockTotalMarketValue" class="text-3xl sm:text-4xl font-black font-mono tracking-tight text-white">0</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/20 text-xs">
+                            <div>
+                                <span class="text-white/70 block font-medium">預估總損益</span>
+                                <span id="stockTotalProfit" class="text-sm sm:text-base font-bold font-mono text-white">NT$0 (+0%)</span>
+                            </div>
+                            <div>
+                                <span class="text-white/70 block font-medium">持股檔數</span>
+                                <span id="stockItemCount" class="text-sm sm:text-base font-bold text-white">0 檔</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 最後同步時間與手動更新按鈕 -->
+                    <div class="flex items-center justify-between text-[11px] text-muji-muted px-1">
+                        <div class="flex items-center gap-1.5">
+                            <i class="far fa-clock text-xs"></i>
+                            <span>最後更新時間：<span id="stockSyncTimeText" class="font-mono font-medium text-muji-text">讀取中...</span></span>
+                        </div>
+                        <button onclick="fetchStocksFromCloud()" class="inline-flex items-center gap-1 text-[11px] font-bold text-muji-muted hover:text-muji-text smooth-transition py-1 px-2 rounded-lg hover:bg-muji-pill">
+                            <i class="fas fa-rotate text-[10px]"></i> 重新整理
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <i class="fas fa-chart-pie text-muji-text text-sm"></i>
+                        <h3 class="font-extrabold text-sm text-muji-text tracking-tight">持股明細清單</h3>
+                    </div>
+
+                    <div id="stockListContainer" class="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
+                        <div class="text-center py-6 text-muji-muted text-xs">載入持股資料中...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. 每月訂閱支出 -->
+            <div class="lg:col-span-6">
+                <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-5">
+                    
+                    <div class="flex items-center justify-between border-b border-muji-border pb-3">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-extrabold text-lg tracking-tight text-muji-text">每月訂閱支出</h3>
+                            <span class="text-xs text-muji-muted font-normal">Subscriptions</span>
+                        </div>
+                        <button onclick="openSubscriptionModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-muji-k90 text-white hover:bg-black smooth-transition shadow-sm">
+                            <i class="fas fa-plus text-[10px]"></i> 新增訂閱
+                        </button>
+                    </div>
+
+                    <div class="bg-muji-k90 text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden">
+                        <div class="absolute -right-8 -bottom-8 w-36 h-36 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                        <div>
+                            <p class="text-xs text-white/80 font-medium mb-1">您本月所有訂閱與固定支出的預估總額</p>
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-base font-bold text-white/90 font-mono">NT$</span>
+                                <span id="subMonthlyTotal" class="text-3xl sm:text-4xl font-black font-mono tracking-tight text-white">0</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/20 text-xs">
+                            <div>
+                                <span class="text-white/70 block font-medium">年度預估</span>
+                                <span id="subYearlyTotal" class="text-sm sm:text-base font-bold font-mono text-white">NT$0</span>
+                            </div>
+                            <div>
+                                <span class="text-white/70 block font-medium">訂閱/固定項目</span>
+                                <span id="subItemCount" class="text-sm sm:text-base font-bold text-white">0 項</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <i class="far fa-bell text-muji-text text-sm"></i>
+                        <h3 class="font-extrabold text-sm text-muji-text tracking-tight">訂閱與固定扣款清單</h3>
+                    </div>
+
+                    <div id="subscriptionListContainer" class="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. 待辦事項 -->
+            <div class="lg:col-span-6">
+                <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-5">
+                    <div class="border-b border-muji-border pb-3 space-y-1.5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                                <h2 class="text-xl font-extrabold tracking-tight">
+                                    <span class="text-muji-text">待辦事項</span>
+                                    <span class="text-muji-muted font-light text-base ml-1">Tasks</span>
+                                </h2>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <div class="flex bg-muji-pill p-1 rounded-2xl text-xs font-semibold">
+                                    <button onclick="setFilter('all')" id="filterBtnAll" class="px-3 py-1.5 rounded-xl smooth-transition bg-muji-text text-white">全部 (<span id="cntAll">0</span>)</button>
+                                    <button onclick="setFilter('active')" id="filterBtnActive" class="px-3 py-1.5 rounded-xl smooth-transition text-muji-muted hover:text-muji-text">進行中 (<span id="cntActive">0</span>)</button>
+                                    <button onclick="setFilter('completed')" id="filterBtnCompleted" class="px-3 py-1.5 rounded-xl smooth-transition text-muji-muted hover:text-muji-text">已完成 (<span id="cntCompleted">0</span>)</button>
+                                </div>
+                                
+                                <button onclick="openSyncSettingsModal()" class="w-8 h-8 rounded-full bg-muji-pill flex items-center justify-center text-muji-muted hover:text-muji-text smooth-transition" title="雲端設定">
+                                    <i class="fas fa-gear text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 待辦事項同步時間戳記 -->
+                        <div class="flex items-center justify-between text-[11px] text-muji-muted pt-0.5">
+                            <div class="flex items-center gap-1.5">
+                                <i class="far fa-clock text-xs"></i>
+                                <span>最後更新時間：<span id="todoSyncTimeText" class="font-mono font-medium text-muji-text">讀取中...</span></span>
+                            </div>
+                            <button onclick="fetchTodosFromCloud()" class="inline-flex items-center gap-1 text-[11px] font-bold text-muji-muted hover:text-muji-text smooth-transition py-0.5 px-2 rounded-lg hover:bg-muji-pill">
+                                <i class="fas fa-rotate text-[10px]"></i> 重新整理
+                            </button>
+                        </div>
+                    </div>
+
+                    <form onsubmit="handleAddTodo(event)" class="space-y-2">
+                        <div class="grid grid-cols-12 gap-2">
+                            <input type="text" id="newTodoInput" placeholder="新增待辦事項內容..." required
+                                class="col-span-12 sm:col-span-5 bg-muji-pill border-0 px-4 py-3 rounded-2xl text-xs focus:outline-none focus:ring-2 focus:ring-muji-text/20 font-medium text-muji-text">
+                            
+                            <select id="newTodoCategorySelect" onchange="handleCategoryChange(this)"
+                                class="col-span-6 sm:col-span-3 bg-muji-pill border-0 px-3 py-3 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
+                            </select>
+
+                            <input type="date" id="newTodoDueDate"
+                                class="col-span-4 sm:col-span-3 bg-muji-pill border-0 px-3 py-3 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
+
+                            <button type="submit" 
+                                class="col-span-2 sm:col-span-1 bg-muji-text hover:bg-black text-white rounded-2xl py-3 flex items-center justify-center smooth-transition shadow-sm">
+                                <i class="fas fa-plus text-xs"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="syncStatusBadge" class="text-[11px] font-medium text-muji-muted flex items-center gap-1.5 px-1">
+                        <i class="fas fa-cloud text-xs"></i> <span>準備載入數據...</span>
+                    </div>
+
+                    <div id="todoListContainer" class="space-y-2.5 max-h-[350px] overflow-y-auto pr-1">
+                        <div class="text-center py-8 text-muji-muted text-xs">載入待辦事項中...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. 隨手便籤 -->
+            <div class="lg:col-span-6">
+                <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-4">
+                    <div class="flex items-center justify-between border-b border-muji-border pb-3">
+                        <h3 class="font-extrabold text-lg flex items-center gap-2">
+                            <span class="text-muji-text">隨手便籤</span>
+                            <span class="text-muji-muted font-light text-sm">Notes</span>
+                        </h3>
+                        <span id="noteSaveStatus" class="text-[10px] font-medium text-muji-muted bg-muji-pill px-2.5 py-1 rounded-full">已自動儲存</span>
+                    </div>
+                    
+                    <textarea id="quickNoteInput" oninput="saveQuickNote()" placeholder="記錄想法、臨時資訊或代辦草稿 (自動儲存於瀏覽器)..."
+                        class="w-full h-[220px] bg-muji-pill border-0 p-4 rounded-2xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-muji-text/20 resize-none smooth-transition leading-relaxed text-muji-text"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Subscription Add/Edit Modal -->
+    <div id="subscriptionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <form onsubmit="handleSaveSubscription(event)" class="bg-muji-card p-6 rounded-[32px] border border-muji-border max-w-md w-full shadow-floating space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-muji-border pb-3">
+                <h3 class="text-base font-extrabold flex items-center gap-2 text-muji-text">
+                    <span>💳</span> <span id="subModalTitle">新增固定支出/訂閱</span>
+                </h3>
+                <button type="button" onclick="closeSubscriptionModal()" class="w-8 h-8 rounded-full bg-muji-pill text-muji-muted hover:text-muji-text flex items-center justify-center">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            
+            <input type="hidden" id="subEditId" value="">
+
+            <div class="space-y-1">
+                <label class="block text-xs font-semibold text-muji-muted">項目名稱</label>
+                <input type="text" id="subNameInput" required placeholder="例如：Claude Pro, 中華電信 5G, Netflix"
+                    class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-muji-text focus:outline-none">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-muji-muted">類別</label>
+                    <select id="subCategorySelect" class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
+                        <option value="開發工具">開發工具</option>
+                        <option value="電信網路">電信網路</option>
+                        <option value="影音娛樂">影音娛樂</option>
+                        <option value="雲端服務">雲端服務</option>
+                        <option value="工作生產力">工作生產力</option>
+                        <option value="生活固定支出">生活固定支出</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-muji-muted">計費週期</label>
+                    <select id="subCycleSelect" class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
+                        <option value="monthly">每月</option>
+                        <option value="yearly">每年</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-muji-muted">費用 (NT$)</label>
+                    <input type="number" id="subAmountInput" required placeholder="例如：640"
+                        class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono font-bold text-muji-text focus:outline-none">
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-muji-muted">每月扣款日</label>
+                    <select id="subPayDaySelect" class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
+                        <option value="1">每月 1 號</option>
+                        <option value="2">每月 2 號</option>
+                        <option value="3">每月 3 號</option>
+                        <option value="4">每月 4 號</option>
+                        <option value="5">每月 5 號</option>
+                        <option value="6">每月 6 號</option>
+                        <option value="7">每月 7 號</option>
+                        <option value="8">每月 8 號</option>
+                        <option value="9">每月 9 號</option>
+                        <option value="10">每月 10 號</option>
+                        <option value="11">每月 11 號</option>
+                        <option value="12">每月 12 號</option>
+                        <option value="13">每月 13 號</option>
+                        <option value="14">每月 14 號</option>
+                        <option value="15">每月 15 號</option>
+                        <option value="16">每月 16 號</option>
+                        <option value="17">每月 17 號</option>
+                        <option value="18">每月 18 號</option>
+                        <option value="19">每月 19 號</option>
+                        <option value="20">每月 20 號</option>
+                        <option value="21">每月 21 號</option>
+                        <option value="22">每月 22 號</option>
+                        <option value="23">每月 23 號</option>
+                        <option value="24">每月 24 號</option>
+                        <option value="25">每月 25 號</option>
+                        <option value="26">每月 26 號</option>
+                        <option value="27">每月 27 號</option>
+                        <option value="28">每月 28 號</option>
+                        <option value="29">每月 29 號</option>
+                        <option value="30">每月 30 號</option>
+                        <option value="31">每月 31 號</option>
+                        <option value="last">月底 (最後一天)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-xs font-semibold text-muji-muted">備註 (選填)</label>
+                <input type="text" id="subNoteInput" placeholder="例如：綁定國泰卡"
+                    class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-muji-border">
+                <button type="button" id="subDeleteBtn" onclick="handleDeleteSubscriptionFromModal()" class="px-4 py-2.5 rounded-2xl text-xs font-bold text-muji-text hover:bg-muji-pill smooth-transition hidden">
+                    <i class="far fa-trash-can mr-1"></i> 刪除
+                </button>
+                <div class="flex items-center gap-2 ml-auto">
+                    <button type="button" onclick="closeSubscriptionModal()" class="px-4 py-2.5 rounded-2xl text-xs font-bold text-muji-muted hover:bg-muji-pill smooth-transition">取消</button>
+                    <button type="submit" class="px-5 py-2.5 bg-muji-k90 hover:bg-black text-white rounded-2xl text-xs font-bold smooth-transition shadow-sm">儲存項目</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Moto Maintenance Modal -->
+    <div id="motoModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <form onsubmit="handleSaveMoto(event)" class="bg-muji-card p-6 rounded-[32px] border border-muji-border max-w-lg w-full shadow-floating space-y-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-muji-border pb-3">
+                <h3 class="text-base font-extrabold flex items-center gap-2 text-muji-text">
+                    <span>🛠️</span> 新增保養紀錄
+                </h3>
+                <button type="button" onclick="closeMotoModal()" class="w-8 h-8 rounded-full bg-muji-pill text-muji-muted hover:text-muji-text flex items-center justify-center">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-muji-muted">日期</label>
+                    <input type="date" id="motoDate" required class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-muji-muted">總里程 (km)</label>
+                    <input type="number" id="motoMileage" required class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono font-bold text-muji-text focus:outline-none" placeholder="例: 103472">
+                </div>
+            </div>
+
+            <div class="space-y-2 bg-muji-pill p-4 rounded-2xl border border-muji-border/50">
+                <label class="block text-xs font-bold text-emerald-800">日常保養項目 (選填)</label>
+                <div class="flex flex-wrap gap-2 mb-1">
+                    <button type="button" onclick="appendMotoRoutine('機油-190')" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-emerald-100 text-emerald-900 hover:bg-emerald-200 smooth-transition">+ 機油 $190</button>
+                    <button type="button" onclick="appendMotoRoutine('齒輪油-50')" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-emerald-100 text-emerald-900 hover:bg-emerald-200 smooth-transition">+ 齒輪油 $50</button>
+                    <button type="button" onclick="appendMotoRoutine('空濾-250')" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-emerald-100 text-emerald-900 hover:bg-emerald-200 smooth-transition">+ 空濾 $250</button>
+                    <button type="button" onclick="appendMotoRoutine('後輪胎-1100')" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-emerald-100 text-emerald-900 hover:bg-emerald-200 smooth-transition">+ 後輪胎 $1100</button>
+                </div>
+                <input type="text" id="motoRoutine" oninput="autoCalculateCost()" placeholder="手動輸入 (例: 機油-190、齒輪油-50)" class="w-full bg-white border-0 px-3 py-2.5 rounded-xl text-xs font-medium text-muji-text focus:outline-none">
+            </div>
+
+            <div class="space-y-1 bg-muji-redSoft p-4 rounded-2xl border border-red-100">
+                <label class="block text-xs font-bold text-muji-redLight">突發損壞 (選填)</label>
+                <input type="text" id="motoUnexpected" oninput="autoCalculateCost()" placeholder="例如：碼表齒輪" class="w-full bg-white border-0 px-3 py-2.5 rounded-xl text-xs font-medium text-muji-text focus:outline-none">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-muji-muted">總費用 ($) <span class="text-[10px] text-emerald-700 font-normal">✨ 自動計算</span></label>
+                    <input type="number" id="motoCost" required class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono font-bold text-muji-text focus:outline-none" placeholder="0">
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-muji-muted">保養所</label>
+                    <select id="motoShop" class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
+                        <option value="蔡">蔡</option>
+                        <option value="大安光陽">大安光陽</option>
+                        <option value="自行保養">自行保養</option>
+                        <option value="其他">其他...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="space-y-1">
+                <label class="block text-xs font-semibold text-muji-muted">備註 (選填)</label>
+                <input type="text" id="motoNote" placeholder="例如：老闆說下次要換煞車皮" class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-muji-border">
+                <button type="button" onclick="closeMotoModal()" class="px-5 py-2.5 rounded-2xl text-xs font-bold text-muji-muted hover:bg-muji-pill smooth-transition">取消</button>
+                <button type="submit" class="px-5 py-2.5 bg-muji-text hover:bg-black text-white rounded-2xl text-xs font-bold smooth-transition shadow-sm">儲存紀錄</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sync Settings Modal -->
+    <div id="syncSettingsModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <form onsubmit="saveSyncSettings(event)" class="bg-muji-card p-6 rounded-[32px] border border-muji-border max-w-md w-full shadow-floating space-y-4">
+            <div class="flex items-center justify-between border-b border-muji-border pb-3">
+                <h3 class="text-sm font-bold flex items-center gap-2 text-muji-text">
+                    <i class="fas fa-gear text-muji-text"></i> 儀表板偏好設定
+                </h3>
+                <button type="button" onclick="closeSyncSettingsModal()" class="w-7 h-7 rounded-full bg-muji-pill text-muji-muted hover:text-muji-text flex items-center justify-center">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-muji-text">待辦事項 Google 試算表 API 網址</label>
+                <input type="url" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
+                    class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-muji-text">股票試算表 API 網址 (獨立試算表)</label>
+                <input type="url" id="stockScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
+                    class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-muji-text">每月訂閱支出 API 網址</label>
+                <input type="url" id="subScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
+                    class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-muji-text">機車保養紀錄 API 網址</label>
+                <input type="url" id="motoScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
+                    class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
+            </div>
+
+            <div id="settingsToastMsg" class="text-xs text-emerald-700 font-bold hidden">
+                <i class="fas fa-circle-check mr-1"></i> 設定已成功儲存！
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button type="button" onclick="closeSyncSettingsModal()" class="px-4 py-2 rounded-2xl text-xs font-bold text-muji-muted hover:bg-muji-pill">取消</button>
+                <button type="submit" class="px-4 py-2 bg-muji-text text-white rounded-2xl text-xs font-bold hover:bg-black">儲存變更</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Password Lock Screen Overlay -->
+    <div id="lockScreenModal" class="fixed inset-0 bg-muji-bg z-50 flex items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-muji-card p-8 rounded-[32px] border border-muji-border max-w-sm w-full shadow-floating text-center space-y-6">
+            <div class="w-16 h-16 bg-muji-pill rounded-2xl flex items-center justify-center mx-auto text-muji-text text-2xl">
+                <i class="fas fa-user-lock"></i>
+            </div>
+            
+            <div>
+                <h2 class="text-xl font-bold tracking-tight text-muji-text">個人儀表板解鎖</h2>
+                <p class="text-xs text-muji-muted mt-1">請輸入存取密碼以查看隱私資料</p>
+            </div>
+
+            <form onsubmit="handleUnlock(event)" class="space-y-4">
+                <div>
+                    <input type="password" id="passwordInput" placeholder="輸入密碼" autofocus
+                        class="w-full text-center tracking-widest text-lg bg-muji-pill border-0 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-muji-text/20 font-bold text-muji-text">
+                    <p id="passwordErrorMsg" class="text-xs text-muji-text font-bold mt-2 hidden">密碼錯誤，請重新輸入</p>
+                </div>
+
+                <button type="submit" 
+                    class="w-full bg-muji-k90 hover:bg-black text-white py-3 rounded-2xl text-xs font-bold smooth-transition shadow-sm flex items-center justify-center gap-2">
+                    <i class="fas fa-key text-xs"></i> 解鎖儀表板
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global State & Config
+        const FIXED_PASSWORD = '7929';
+        let todos = [];
+        let currentFilter = 'all';
+        let categories = ['工作', '生活', '運動', '學習'];
+        let noteSaveTimeout = null;
+        let motoRecords = [];
+        let isMotoExpanded = false;
+        let subDeleteConfirming = false;
+
+        // Calendar State Initialization
+        const todayNow = new Date();
+        let calendarYear = todayNow.getFullYear();
+        let calendarMonth = todayNow.getMonth();
+        let selectedDateStr = `${todayNow.getFullYear()}-${String(todayNow.getMonth() + 1).padStart(2, '0')}-${String(todayNow.getDate()).padStart(2, '0')}`;
+
+        // Subscriptions & Fixed Expenses State
+        let subscriptions = [];
+        const defaultSubscriptions = [
+            { id: 'sub_1', name: 'Claude Pro', category: '開發工具', amount: 640, cycle: 'monthly', payDay: '1', note: 'AI 協作訂閱' },
+            { id: 'sub_2', name: '中華電信 5G 門號', category: '電信網路', amount: 999, cycle: 'monthly', payDay: '5', note: '手機資費' },
+            { id: 'sub_3', name: 'iCloud+ 200GB', category: '雲端服務', amount: 90, cycle: 'monthly', payDay: '2', note: '蘋果雲端備份' },
+            { id: 'sub_4', name: 'Netflix 高級方案', category: '影音娛樂', amount: 390, cycle: 'monthly', payDay: '15', note: '家庭共用' }
+        ];
+
+        // Default Courses Data (24-session complete curriculum)
+        const defaultCoursesList = [
+            { id: 'c1', dateStart: '2026-08-15', dateEnd: '2026-08-15', time: '09:00 - 12:00', title: '【AI協作思維與提示詞實務】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.生成式AI邏輯架構與演算法原理。2.Prompt操作能力建構：提升AI輸出品質' },
+            { id: 'c2', dateStart: '2026-08-15', dateEnd: '2026-08-15', time: '13:00 - 17:00', title: '【AI智慧視覺語義與風格建構】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.跨模態視覺風格轉譯：實現語意到視覺風格的精準轉換。2.圖像細節增補：透過AI強化視覺素材細節與解析度' },
+            { id: 'c3', dateStart: '2026-08-22', dateEnd: '2026-08-22', time: '09:00 - 12:00', title: '【AI輔助品牌識別設計實務】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.智慧化品牌構思與原型開發：運用AI進行Logo創意發想。2.設計工作流整合與完稿：將AI概念轉化為商業應用之視覺資產。' },
+            { id: 'c4', dateStart: '2026-08-22', dateEnd: '2026-08-22', time: '13:00 - 17:00', title: '【品牌IP角色建構】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.企業形象代言人系統化設計：建構具識別度之企業數位公仔。2.AI角色從2D設計到3D多視角展示。3.智慧構圖與參數調節技巧(一)' },
+            { id: 'c5', dateStart: '2026-08-29', dateEnd: '2026-08-29', time: '09:00 - 12:00', title: '【智慧化視覺應用】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.智慧構圖與參數調節技巧(二)：提升商業視覺與活動訊息的傳達效率。2.AI數位場景擬真應用。' },
+            { id: 'c6', dateStart: '2026-08-29', dateEnd: '2026-08-29', time: '13:00 - 17:00', title: '【AI助理在企業的實戰應用(一)】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.數位化資訊整理：利用AI將散亂資訊轉化為結構化企業知識庫。2.數位資產自動化重建。3.運用AI視覺邏輯強化版面布局優化' },
+            { id: 'c7', dateStart: '2026-09-05', dateEnd: '2026-09-05', time: '09:00 - 12:00', title: '【AI助理在企業的實戰應用(二)】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.運用AI視覺邏輯強化版面布局優化與專業度。2.客製化風格開發。3.跨平台智慧協作。' },
+            { id: 'c8', dateStart: '2026-09-05', dateEnd: '2026-09-05', time: '13:00 - 17:00', title: '【AI智慧影音策劃】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.數位驅動之市場洞察：產出高轉換率腳本與分鏡提示詞。2.多模態素材生成。3.掌握影片編輯技能。' },
+            { id: 'c9', dateStart: '2026-09-12', dateEnd: '2026-09-12', time: '09:00 - 12:00', title: '【AI智慧影音剪輯與後製】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.AI協作文字生成影片的行銷應用。2.運用AI進行圖片轉影片及動態素材。3.自動化完成字幕與特效佈署等後製與輸出。' },
+            { id: 'c10', dateStart: '2026-09-12', dateEnd: '2026-09-12', time: '13:00 - 17:00', title: '【AI智慧影音配樂】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.AI視覺感知與感官配樂：辨識影片情緒並產出專屬音樂。2.影音智慧定位務：自動化影音同步技術，提升宣傳片完整度。' },
+            { id: 'c11', dateStart: '2026-09-19', dateEnd: '2026-09-19', time: '09:00 - 12:00', title: '【智慧圖像處理實務】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.AI高階商用圖像修飾與智慧優化。2.AI作視覺合成：多場景模擬、行銷情境應用。' },
+            { id: 'c12', dateStart: '2026-09-19', dateEnd: '2026-09-19', time: '13:00 - 17:00', title: '【精準行銷與整合應用】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.AI自動產出精準行銷文宣與策略生成。2.視覺情境整合輸出實務。' },
+            { id: 'c13', dateStart: '2026-08-30', dateEnd: '2026-08-30', time: '09:00 - 12:00', title: '【AI行銷時代的全貌與產業模式】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.AI如何重新定義商品銷售的流程 2.熟悉主要AI工具應用' },
+            { id: 'c14', dateStart: '2026-08-30', dateEnd: '2026-08-30', time: '13:00 - 16:00', title: '【選品策略與市場分析】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.使用AI語言模型生成熱門品類關鍵字分析 2.操作電商平台熱搜，進行產品市場熱度調查' },
+            { id: 'c15', dateStart: '2026-09-06', dateEnd: '2026-09-06', time: '09:00 - 12:00', title: '【AI腳本撰寫與吸睛文案技巧】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.利用AI語言模型編寫不同行銷腳本 2.快速生成商品標題、痛點文案與行動呼籲CTA' },
+            { id: 'c16', dateStart: '2026-09-06', dateEnd: '2026-09-06', time: '13:00 - 16:00', title: '【AI圖像生成與商品圖優化】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.使用Canva設計商品促銷圖 2.操作商品圖去背與背景替換，製作差異化商品圖' },
+            { id: 'c17', dateStart: '2026-09-13', dateEnd: '2026-09-13', time: '09:00 - 12:00', title: '【短影音腳本與分鏡設計】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.拍攝商品短影音運鏡技巧 2.掌握影像節奏、字幕搭配' },
+            { id: 'c18', dateStart: '2026-09-13', dateEnd: '2026-09-13', time: '13:00 - 16:00', title: '【AI短影音剪輯與生成】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.使用短影音範本製作30秒行銷影片 2.導入AI語言模型生成AI配音與過場動畫' },
+            { id: 'c19', dateStart: '2026-09-20', dateEnd: '2026-09-20', time: '09:00 - 12:00', title: '【AI虛擬角色創意設計】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.廣告聲優行銷語音手機錄製 2.合成虛擬人物語音與影片至商品內容' },
+            { id: 'c20', dateStart: '2026-09-20', dateEnd: '2026-09-20', time: '13:00 - 16:00', title: '【打造個人行銷IP與直播導購企劃】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.AI協助規劃直播節目規劃 2.建立個人品牌風格行銷策略' },
+            { id: 'c21', dateStart: '2026-10-04', dateEnd: '2026-10-04', time: '09:00 - 12:00', title: '【善用Google廣告驅動電商與行銷轉單】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.學會設計有效的廣告策略並針對產品優化 2.建立關鍵字廣告與再行銷活動' },
+            { id: 'c22', dateStart: '2026-10-04', dateEnd: '2026-10-04', time: '13:00 - 16:00', title: '【Google Ads廣告策略規劃邏輯】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.建立有轉換力的廣告素材 2.選擇合適的廣告類型與格式' },
+            { id: 'c23', dateStart: '2026-10-11', dateEnd: '2026-10-11', time: '09:00 - 12:00', title: '【AI短影音媒體創作】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.有故事性的短影音內容 2.AI動態影片分鏡生成技巧' },
+            { id: 'c24', dateStart: '2026-10-11', dateEnd: '2026-10-11', time: '13:00 - 16:00', title: '【AI短影音剪輯與廣告內容】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.融入商業產品或品牌內容 2.情境式行銷效果遠勝直接廣告' }
+        ];
+
+        let coursesList = [...defaultCoursesList];
+
+        // API Endpoint URLs
+        const MOTO_SCRIPT_URL = localStorage.getItem('dashboard_moto_script_url') || 'https://script.google.com/macros/s/AKfycbzONpfqthWmWYT7U0WnLbWo1dp0CmXnohNkgBb4fhAATTpJolIMDKKb_C64gUMppeUm/exec';
+        const NEW_DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby94KI5QIR7enJaySoimJcj0aNfw9T0oWyi26i3BLFtqBqbnQJm9TdS0z4mNivLxzrt/exec';
+        let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || NEW_DEFAULT_SCRIPT_URL;
+        let stockScriptUrl = localStorage.getItem('dashboard_stock_script_url') || 'https://script.google.com/macros/s/AKfycbzvKPGYxfKNeTvN5c2h4ouoicUeNLjD7UmphVUIzcsFh4sMtexJ6mgoJsERcwr6CS8k/exec';
+        let calendarScriptUrl = localStorage.getItem('dashboard_calendar_script_url') || 'https://script.google.com/macros/s/AKfycbycIO7NeF6w5EYR3S4eYBn_ZgC-ONUReRkUZBaW23eqQxqi5SsDmk-KchmwczPM3h8H/exec';
+        let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || googleScriptUrl;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('dashboard_google_script_url') || localStorage.getItem('dashboard_google_script_url').includes('AKfycbzjYomS')) {
+                googleScriptUrl = NEW_DEFAULT_SCRIPT_URL;
+                localStorage.setItem('dashboard_google_script_url', NEW_DEFAULT_SCRIPT_URL);
+            }
+            if (!localStorage.getItem('dashboard_sub_script_url') || localStorage.getItem('dashboard_sub_script_url').includes('AKfycbzjYomS')) {
+                subScriptUrl = NEW_DEFAULT_SCRIPT_URL;
+                localStorage.setItem('dashboard_sub_script_url', NEW_DEFAULT_SCRIPT_URL);
+            }
+
+            checkLockState();
+            updateClockAndDate();
+            setInterval(updateClockAndDate, 1000);
+            fetchTainanWeather();
+            setInterval(fetchTainanWeather, 600000);
+            loadQuickNote();
+            renderCategorySelect();
+
+            // 讀取快取的更新時間顯示
+            const cachedStockTime = localStorage.getItem('dashboard_stock_last_sync');
+            if (cachedStockTime && document.getElementById('stockSyncTimeText')) {
+                document.getElementById('stockSyncTimeText').textContent = cachedStockTime;
+            }
+
+            const cachedMotoTime = localStorage.getItem('dashboard_moto_last_sync');
+            if (cachedMotoTime && document.getElementById('motoSyncTimeText')) {
+                document.getElementById('motoSyncTimeText').textContent = cachedMotoTime;
+            }
+
+            const cachedTodoTime = localStorage.getItem('dashboard_todo_last_sync');
+            if (cachedTodoTime && document.getElementById('todoSyncTimeText')) {
+                document.getElementById('todoSyncTimeText').textContent = cachedTodoTime;
+            }
+
+            fetchTodosFromCloud();
+            fetchMotoRecordsFromCloud();
+            fetchGoogleCalendar();
+            fetchSubscriptionsFromCloud();
+            fetchStocksFromCloud();
+        });
+
+        // Compute Subscription Next Date
+        function computeNextDate(payDay, cycle = 'monthly') {
+            const today = new Date();
+            let year = today.getFullYear();
+            let month = today.getMonth();
+            let day = parseInt(payDay, 10);
+
+            let targetDate;
+            if (payDay === 'last') {
+                targetDate = new Date(year, month + 1, 0);
+            } else {
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const validDay = Math.min(day, daysInMonth);
+                targetDate = new Date(year, month, validDay);
+            }
+
+            const todayZero = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+            if (targetDate < todayZero) {
+                if (cycle === 'yearly') {
+                    year += 1;
+                } else {
+                    month += 1;
+                }
+                if (payDay === 'last') {
+                    targetDate = new Date(year, month + 1, 0);
+                } else {
+                    const daysInMonth = new Date(year, month + 1, 0).getDate();
+                    const validDay = Math.min(day, daysInMonth);
+                    targetDate = new Date(year, month, validDay);
+                }
+            }
+
+            const y = targetDate.getFullYear();
+            const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+            const d = String(targetDate.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        // Stocks Fetch & Render
+        async function fetchStocksFromCloud() {
+            const syncBadge = document.getElementById('stockSyncStatusBadge');
+            const syncTimeEl = document.getElementById('stockSyncTimeText');
+            
+            if (syncTimeEl) {
+                syncTimeEl.textContent = '同步更新中...';
+            }
+
+            if (!stockScriptUrl) {
+                loadDefaultStocks();
+                return;
+            }
+            try {
+                const res = await fetch(stockScriptUrl);
+                const data = await res.json();
+                if (data.status === 'success' && Array.isArray(data.stocks)) {
+                    renderStocks(data.totalMarketValue || 0, data.totalCost || 0, data.totalProfit || 0, data.totalProfitPercent || 0, data.stocks);
+                    
+                    if (syncBadge) {
+                        syncBadge.classList.remove('hidden');
+                        syncBadge.classList.add('inline-flex');
+                    }
+
+                    const now = new Date();
+                    const timeStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                    if (syncTimeEl) {
+                        syncTimeEl.textContent = timeStr;
+                    }
+                    localStorage.setItem('dashboard_stock_last_sync', timeStr);
+                } else {
+                    loadDefaultStocks();
+                }
+            } catch (err) {
+                console.warn('Stocks fetch error, fallback:', err);
+                loadDefaultStocks();
+                if (syncBadge) {
+                    syncBadge.classList.add('hidden');
+                    syncBadge.classList.remove('inline-flex');
+                }
+                if (syncTimeEl) {
+                    syncTimeEl.textContent = localStorage.getItem('dashboard_stock_last_sync') || '連線失敗，使用離線資料';
+                }
+            }
+        }
+
+        function loadDefaultStocks() {
+            const fallbackStocks = [
+                { name: '台積電', symbol: '2330', price: 2420, shares: 312, avgCost: 852.09, itemMarketValue: 754562, itemProfit: 488667, itemProfitPercent: 184.3, ratio: '77.32%' },
+                { name: '統一-FANG+', symbol: '00757', price: 138.7, shares: 1088, avgCost: 99.87, itemMarketValue: 150877, itemProfit: 42278, itemProfitPercent: 38.9, ratio: '15.45%' },
+                { name: '元大台灣', symbol: '0050', price: 106.95, shares: 492, avgCost: 76.96, itemMarketValue: 52631, itemProfit: 14781, itemProfitPercent: 39.0, ratio: '5.39%' },
+                { name: 'S&P 500', symbol: '00646', price: 76.85, shares: 234, avgCost: 67.84, itemMarketValue: 17978, itemProfit: 2095, itemProfitPercent: 13.2, ratio: '1.84%' }
+            ];
+            renderStocks(976548, 368525, 608023, 165.0, fallbackStocks);
+        }
+
+        function renderStocks(totalMarketValue, totalCost, totalProfit, totalProfitPercent, stocks) {
+            const marketValEl = document.getElementById('stockTotalMarketValue');
+            const profitEl = document.getElementById('stockTotalProfit');
+            const countEl = document.getElementById('stockItemCount');
+            const summaryCard = document.getElementById('stockSummaryCard');
+            const container = document.getElementById('stockListContainer');
+
+            if (!container) return;
+
+            if (marketValEl) marketValEl.textContent = Math.round(totalMarketValue).toLocaleString();
+            if (countEl) countEl.textContent = `${stocks.length} 檔`;
+
+            if (profitEl) {
+                const prefix = totalProfit >= 0 ? '+' : '';
+                profitEl.textContent = `NT$${prefix}${Math.round(totalProfit).toLocaleString()} (${prefix}${totalProfitPercent}%)`;
+                profitEl.className = 'text-sm sm:text-base font-bold font-mono text-white';
+            }
+
+            if (summaryCard) {
+                if (totalProfit > 0) {
+                    summaryCard.className = 'bg-[#C83B2B] text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
+                } else if (totalProfit < 0) {
+                    summaryCard.className = 'bg-[#2D5A3F] text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
+                } else {
+                    summaryCard.className = 'bg-muji-k90 text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
+                }
+            }
+
+            if (stocks.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-muji-muted text-xs">目前無持股資料</div>`;
+                return;
+            }
+
+            let html = '';
+            stocks.forEach(stk => {
+                const isPositive = (stk.itemProfit || 0) >= 0;
+                const profitBadgeColor = isPositive ? 'bg-[#C83B2B] text-white' : 'bg-[#2D5A3F] text-white';
+                const profitSign = isPositive ? '+' : '';
+
+                let priceVal = stk.price || stk.currentPrice;
+                if (!priceVal && stk.shares > 0 && stk.itemMarketValue > 0) {
+                    priceVal = stk.itemMarketValue / stk.shares;
+                }
+                let formattedPrice = '--';
+                if (priceVal) {
+                    const num = Number(priceVal);
+                    formattedPrice = '$' + (Number.isInteger(num) ? num.toLocaleString() : num.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 2}));
+                }
+
+                html += `
+                    <div class="p-3.5 bg-muji-pill rounded-2xl border border-transparent hover:border-muji-border smooth-transition space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-muji-text">${escapeHtml(stk.name)}</span>
+                                <span class="text-[10px] font-mono bg-muji-card px-2 py-0.5 rounded-md text-muji-text font-bold border border-muji-border">${formattedPrice}</span>
+                            </div>
+                            <span class="text-xs font-black font-mono text-muji-text">佔比 ${stk.ratio}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] text-muji-muted">
+                            <span>持有股數：${stk.shares.toLocaleString()} 股</span>
+                            <span class="font-bold font-mono px-2 py-0.5 rounded-lg text-[10px] ${profitBadgeColor}">${profitSign}${(stk.itemProfit || 0).toLocaleString()} (${profitSign}${stk.itemProfitPercent}%)</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Subscriptions
+        async function fetchSubscriptionsFromCloud() {
+            if (!subScriptUrl) {
+                loadSubscriptions();
+                return;
+            }
+            try {
+                const res = await fetch(`${subScriptUrl}?action=get`);
+                const data = await res.json();
+                if (data.status === 'success' && Array.isArray(data.subscriptions)) {
+                    subscriptions = data.subscriptions;
+                    saveSubscriptions();
+                } else {
+                    loadSubscriptions();
+                }
+            } catch (err) {
+                loadSubscriptions();
+            }
+            renderSubscriptions();
+        }
+
+        function loadSubscriptions() {
+            const saved = localStorage.getItem('dashboard_subscriptions');
+            if (saved) {
+                try { subscriptions = JSON.parse(saved); } catch(e) { subscriptions = [...defaultSubscriptions]; }
+            } else {
+                subscriptions = [...defaultSubscriptions];
+                saveSubscriptions();
+            }
+            renderSubscriptions();
+        }
+
+        function saveSubscriptions() {
+            localStorage.setItem('dashboard_subscriptions', JSON.stringify(subscriptions));
+        }
+
+        function renderSubscriptions() {
+            const container = document.getElementById('subscriptionListContainer');
+            const monthlyTotalEl = document.getElementById('subMonthlyTotal');
+            const yearlyTotalEl = document.getElementById('subYearlyTotal');
+            const countEl = document.getElementById('subItemCount');
+
+            if (!container) return;
+
+            if (subscriptions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-muji-muted text-xs font-medium">
+                        <i class="far fa-credit-card text-2xl mb-2 text-muji-border"></i>
+                        <p>目前無固定支出或訂閱項目</p>
+                    </div>
+                `;
+                if (monthlyTotalEl) monthlyTotalEl.textContent = '0';
+                if (yearlyTotalEl) yearlyTotalEl.textContent = 'NT$0';
+                if (countEl) countEl.textContent = '0 項';
+                return;
+            }
+
+            let totalMonthly = 0;
+            subscriptions.forEach(sub => {
+                const amt = parseFloat(sub.amount) || 0;
+                if (sub.cycle === 'yearly') {
+                    totalMonthly += amt / 12;
+                } else {
+                    totalMonthly += amt;
+                }
+                const payDayVal = sub.payDay || '1';
+                sub.nextDate = computeNextDate(payDayVal, sub.cycle);
+            });
+
+            const totalYearly = totalMonthly * 12;
+
+            if (monthlyTotalEl) monthlyTotalEl.textContent = Math.round(totalMonthly).toLocaleString();
+            if (yearlyTotalEl) yearlyTotalEl.textContent = `NT$${Math.round(totalYearly).toLocaleString()}`;
+            if (countEl) countEl.textContent = `${subscriptions.length} 項`;
+
+            const sorted = [...subscriptions].sort((a, b) => (a.nextDate || '').localeCompare(b.nextDate || ''));
+            const todayStr = new Date().toISOString().split('T')[0];
+            const todayObj = new Date(todayStr);
+
+            let html = '';
+            sorted.forEach(sub => {
+                const nextDateObj = new Date(sub.nextDate);
+                const diffTime = nextDateObj - todayObj;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                const isUpcoming7Days = diffDays >= 0 && diffDays <= 7;
+                const isOverdue = diffDays < 0;
+
+                let countdownBadge = '';
+                if (isOverdue) {
+                    countdownBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-muji-redSoft text-muji-redLight">已到期</span>`;
+                } else if (diffDays === 0) {
+                    countdownBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 animate-pulse">今天扣款</span>`;
+                } else if (isUpcoming7Days) {
+                    countdownBadge = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">${diffDays} 天後</span>`;
+                } else {
+                    countdownBadge = `<span class="text-[10px] font-medium text-muji-muted">${diffDays} 天後</span>`;
+                }
+
+                const cardBorderClass = isUpcoming7Days || diffDays === 0
+                    ? 'border-amber-300 bg-amber-50/50 shadow-sm' 
+                    : 'border-transparent hover:border-muji-border bg-muji-pill';
+
+                const payDayLabel = sub.payDay === 'last' ? '月底' : `${sub.payDay || '1'} 號`;
+
+                html += `
+                    <div onclick="openSubscriptionModal('${sub.id}')" class="p-3.5 rounded-2xl border ${cardBorderClass} cursor-pointer smooth-transition space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-muji-text">${escapeHtml(sub.name)}</span>
+                            <span class="text-xs font-black font-mono text-muji-text">NT$${(parseFloat(sub.amount) || 0).toLocaleString()}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] text-muji-muted">
+                            <span>${escapeHtml(sub.category || '未分類')} · 每月 ${payDayLabel} (${sub.nextDate})</span>
+                            ${countdownBadge}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function openSubscriptionModal(id = null) {
+            subDeleteConfirming = false;
+            resetSubDeleteBtnUI();
+            const modal = document.getElementById('subscriptionModal');
+            const deleteBtn = document.getElementById('subDeleteBtn');
+            const titleEl = document.getElementById('subModalTitle');
+
+            if (!modal) return;
+
+            const editIdEl = document.getElementById('subEditId');
+            const nameEl = document.getElementById('subNameInput');
+            const catEl = document.getElementById('subCategorySelect');
+            const cycleEl = document.getElementById('subCycleSelect');
+            const amountEl = document.getElementById('subAmountInput');
+            const payDayEl = document.getElementById('subPayDaySelect');
+            const noteEl = document.getElementById('subNoteInput');
+
+            if (id) {
+                const sub = subscriptions.find(s => s.id === id);
+                if (sub) {
+                    if (editIdEl) editIdEl.value = sub.id;
+                    if (nameEl) nameEl.value = sub.name || '';
+                    if (catEl) catEl.value = sub.category || '其他';
+                    if (cycleEl) cycleEl.value = sub.cycle || 'monthly';
+                    if (amountEl) amountEl.value = sub.amount || '';
+                    if (payDayEl) payDayEl.value = sub.payDay || '1';
+                    if (noteEl) noteEl.value = sub.note || '';
+
+                    if (titleEl) titleEl.textContent = '編輯固定支出 / 訂閱';
+                    if (deleteBtn) deleteBtn.classList.remove('hidden');
+                }
+            } else {
+                if (editIdEl) editIdEl.value = '';
+                if (nameEl) nameEl.value = '';
+                if (catEl) catEl.value = '開發工具';
+                if (cycleEl) cycleEl.value = 'monthly';
+                if (amountEl) amountEl.value = '';
+                if (payDayEl) payDayEl.value = '1';
+                if (noteEl) noteEl.value = '';
+
+                if (titleEl) titleEl.textContent = '新增固定支出 / 訂閱';
+                if (deleteBtn) deleteBtn.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeSubscriptionModal() {
+            subDeleteConfirming = false;
+            resetSubDeleteBtnUI();
+            const modal = document.getElementById('subscriptionModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function resetSubDeleteBtnUI() {
+            const deleteBtn = document.getElementById('subDeleteBtn');
+            if (deleteBtn) {
+                deleteBtn.innerHTML = '<i class="far fa-trash-can mr-1"></i> 刪除';
+                deleteBtn.className = 'px-4 py-2.5 rounded-2xl text-xs font-bold text-muji-text hover:bg-muji-pill smooth-transition hidden';
+            }
+        }
+
+        async function handleSaveSubscription(event) {
+            event.preventDefault();
+            const editId = document.getElementById('subEditId')?.value || '';
+            const name = document.getElementById('subNameInput')?.value.trim() || '';
+            const category = document.getElementById('subCategorySelect')?.value || '其他';
+            const cycle = document.getElementById('subCycleSelect')?.value || 'monthly';
+            const amount = parseFloat(document.getElementById('subAmountInput')?.value) || 0;
+            const payDay = document.getElementById('subPayDaySelect')?.value || '1';
+            const note = document.getElementById('subNoteInput')?.value.trim() || '';
+
+            if (!name) return;
+
+            const computedNextDate = computeNextDate(payDay, cycle);
+            let savedItem = null;
+
+            if (editId) {
+                const item = subscriptions.find(s => s.id === editId);
+                if (item) {
+                    item.name = name;
+                    item.category = category;
+                    item.cycle = cycle;
+                    item.amount = amount;
+                    item.payDay = payDay;
+                    item.nextDate = computedNextDate;
+                    item.note = note;
+                    savedItem = item;
+                }
+            } else {
+                savedItem = {
+                    id: 'sub_' + Date.now(),
+                    name,
+                    category,
+                    cycle,
+                    amount,
+                    payDay,
+                    nextDate: computedNextDate,
+                    note
+                };
+                subscriptions.push(savedItem);
+            }
+
+            saveSubscriptions();
+            renderSubscriptions();
+            closeSubscriptionModal();
+
+            if (subScriptUrl && savedItem) {
+                try {
+                    await fetch(`${subScriptUrl}?action=save&target=sub&id=${encodeURIComponent(savedItem.id)}&name=${encodeURIComponent(savedItem.name)}&category=${encodeURIComponent(savedItem.category)}&cycle=${encodeURIComponent(savedItem.cycle)}&amount=${savedItem.amount}&payDay=${encodeURIComponent(savedItem.payDay)}&note=${encodeURIComponent(savedItem.note)}`);
+                } catch(e) {}
+            }
+        }
+
+        async function handleDeleteSubscriptionFromModal() {
+            const editId = document.getElementById('subEditId')?.value;
+            if (!editId) return;
+            const deleteBtn = document.getElementById('subDeleteBtn');
+
+            if (!subDeleteConfirming) {
+                subDeleteConfirming = true;
+                if (deleteBtn) {
+                    deleteBtn.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i> 再次點擊確定刪除';
+                    deleteBtn.className = 'px-4 py-2.5 rounded-2xl text-xs font-bold bg-black text-white smooth-transition';
+                }
+                setTimeout(() => {
+                    if (subDeleteConfirming) {
+                        subDeleteConfirming = false;
+                        if (deleteBtn && !deleteBtn.classList.contains('hidden')) {
+                            deleteBtn.innerHTML = '<i class="far fa-trash-can mr-1"></i> 刪除';
+                            deleteBtn.className = 'px-4 py-2.5 rounded-2xl text-xs font-bold text-muji-text hover:bg-muji-pill smooth-transition';
+                        }
+                    }
+                }, 3000);
+                return;
+            }
+
+            subscriptions = subscriptions.filter(s => s.id !== editId);
+            saveSubscriptions();
+            renderSubscriptions();
+            closeSubscriptionModal();
+
+            if (subScriptUrl) {
+                try {
+                    await fetch(`${subScriptUrl}?action=delete&target=sub&id=${encodeURIComponent(editId)}`);
+                } catch(e) {}
+            }
+        }
+
+        // Lock State
+        function checkLockState() {
+            const lockModal = document.getElementById('lockScreenModal');
+            if (!lockModal) return;
+            const isUnlocked = sessionStorage.getItem('dashboard_unlocked') === 'true';
+            if (isUnlocked) {
+                lockModal.classList.add('hidden');
+            } else {
+                lockModal.classList.remove('hidden');
+                setTimeout(() => {
+                    const pwdInput = document.getElementById('passwordInput');
+                    if (pwdInput) pwdInput.focus();
+                }, 100);
+            }
+        }
+
+        function handleUnlock(event) {
+            event.preventDefault();
+            const pwdInput = document.getElementById('passwordInput');
+            const errorMsg = document.getElementById('passwordErrorMsg');
+            const lockModal = document.getElementById('lockScreenModal');
+
+            if (pwdInput && pwdInput.value === FIXED_PASSWORD) {
+                sessionStorage.setItem('dashboard_unlocked', 'true');
+                if (lockModal) lockModal.classList.add('hidden');
+                pwdInput.value = '';
+                if (errorMsg) errorMsg.classList.add('hidden');
+            } else {
+                if (errorMsg) errorMsg.classList.remove('hidden');
+                if (pwdInput) {
+                    pwdInput.value = '';
+                    pwdInput.focus();
+                }
+            }
+        }
+
+        function lockDashboard() {
+            sessionStorage.removeItem('dashboard_unlocked');
+            checkLockState();
+        }
+
+        // Weather & Clock
+        async function fetchTainanWeather() {
+            const tempEl = document.getElementById('widgetApparentTemp');
+            const humEl = document.getElementById('widgetHumidity');
+            const uvEl = document.getElementById('widgetUV');
+            const circleIconEl = document.getElementById('weatherCircleIcon');
+
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=22.9908&longitude=120.2133&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,uv_index&timezone=Asia%2FTaipei`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (data && data.current) {
+                    const c = data.current;
+                    const apparentTemp = Math.round(c.apparent_temperature);
+                    const humidity = c.relative_humidity_2m;
+                    const isDay = c.is_day === 1;
+                    const uvVal = isDay ? Math.round(c.uv_index || 0) : 0;
+                    const uvText = isDay ? `${uvVal} (${getUVLevel(uvVal)})` : `0 (夜間)`;
+
+                    if (tempEl) tempEl.textContent = apparentTemp;
+                    if (humEl) humEl.textContent = `${humidity} %`;
+                    if (uvEl) uvEl.textContent = uvText;
+
+                    const weatherInfo = getWeatherInfo(c.weather_code, isDay);
+                    if (circleIconEl) circleIconEl.textContent = weatherInfo.icon;
+                }
+            } catch (err) {
+                if (tempEl) tempEl.textContent = '28';
+                if (humEl) humEl.textContent = '75 %';
+                if (uvEl) uvEl.textContent = '0 (夜間)';
+                if (circleIconEl) circleIconEl.textContent = '🌙';
+            }
+        }
+
+        function getUVLevel(uv) {
+            if (uv <= 2) return '低量';
+            if (uv <= 5) return '中等';
+            if (uv <= 7) return '高量';
+            if (uv <= 10) return '過量';
+            return '極高';
+        }
+
+        function getWeatherInfo(code, isDay = true) {
+            if (code === 0) return { icon: isDay ? '☀️' : '🌙', text: '晴朗' };
+            if ([1, 2, 3].includes(code)) return { icon: isDay ? '🌤️' : '☁️', text: '多雲' };
+            if ([45, 48].includes(code)) return { icon: '🌫️', text: '有霧' };
+            if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return { icon: '🌧️', text: '陣雨' };
+            if ([95, 96, 99].includes(code)) return { icon: '🌩️', text: '雷陣雨' };
+            return { icon: '⛅', text: '陰天' };
+        }
+
+        function updateClockAndDate() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            const clockEl = document.getElementById('clockText');
+            if (clockEl) clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+
+            const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const fullDateEl = document.getElementById('fullDateText');
+            if (fullDateEl) {
+                fullDateEl.textContent = `${now.getFullYear()}年 ${now.getMonth() + 1}月 ${now.getDate()}日 ${days[now.getDay()]}`;
+            }
+        }
+
+        // Quick Note
+        function loadQuickNote() {
+            const savedNote = localStorage.getItem('dashboard_quick_note') || '';
+            const textarea = document.getElementById('quickNoteInput');
+            if (textarea) textarea.value = savedNote;
+        }
+
+        function saveQuickNote() {
+            const statusEl = document.getElementById('noteSaveStatus');
+            if (statusEl) statusEl.textContent = '儲存中...';
+
+            clearTimeout(noteSaveTimeout);
+            noteSaveTimeout = setTimeout(() => {
+                const val = document.getElementById('quickNoteInput').value;
+                localStorage.setItem('dashboard_quick_note', val);
+                if (statusEl) statusEl.textContent = '已自動儲存';
+            }, 600);
+        }
+
+        // Todos
+        function renderCategorySelect() {
+            const select = document.getElementById('newTodoCategorySelect');
+            if (!select) return;
+
+            let html = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+            html += `<option value="__ADD_NEW__">+ 自訂類別...</option>`;
+            select.innerHTML = html;
+        }
+
+        function handleCategoryChange(elem) {
+            if (elem.value === '__ADD_NEW__') {
+                const newCat = prompt('請輸入新的分類名稱：');
+                if (newCat && newCat.trim() !== '') {
+                    const trimmed = newCat.trim();
+                    if (!categories.includes(trimmed)) {
+                        categories.push(trimmed);
+                    }
+                    renderCategorySelect();
+                    elem.value = trimmed;
+                } else {
+                    elem.value = categories[0];
+                }
+            }
+        }
+
+        async function fetchTodosFromCloud() {
+            updateSyncStatusUI('loading', '連線雲端資料中...');
+            const syncTimeEl = document.getElementById('todoSyncTimeText');
+            if (syncTimeEl) syncTimeEl.textContent = '同步更新中...';
+
+            if (!googleScriptUrl) {
+                loadLocalTodos();
+                updateSyncStatusUI('local', '本機模式');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${googleScriptUrl}?action=get`);
+                const data = await res.json();
+
+                if (data.status === 'success' && Array.isArray(data.todos)) {
+                    todos = data.todos;
+                    saveLocalTodosBackup();
+                    renderTodos();
+                    updateSyncStatusUI('success', '已同步 Google 試算表');
+
+                    const now = new Date();
+                    const timeStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                    if (syncTimeEl) syncTimeEl.textContent = timeStr;
+                    localStorage.setItem('dashboard_todo_last_sync', timeStr);
+                } else {
+                    throw new Error(data.message || '格式無效');
+                }
+            } catch (err) {
+                loadLocalTodos();
+                updateSyncStatusUI('warning', '連線失敗，使用本機暫存');
+                if (syncTimeEl) syncTimeEl.textContent = localStorage.getItem('dashboard_todo_last_sync') || '連線失敗，使用離線資料';
+            }
+        }
+
+        function loadLocalTodos() {
+            const saved = localStorage.getItem('dashboard_todos');
+            if (saved) {
+                try { todos = JSON.parse(saved); } catch(e) { todos = []; }
+            } else {
+                todos = [];
+            }
+            renderTodos();
+        }
+
+        function saveLocalTodosBackup() {
+            localStorage.setItem('dashboard_todos', JSON.stringify(todos));
+        }
+
+        function updateSyncStatusUI(type, message) {
+            const badge = document.getElementById('syncStatusBadge');
+            if (!badge) return;
+
+            let icon = 'fa-cloud';
+            let colorClass = 'text-muji-muted';
+
+            if (type === 'loading') {
+                icon = 'fa-arrows-rotate fa-spin';
+            } else if (type === 'success') {
+                icon = 'fa-cloud-arrow-up';
+                colorClass = 'text-emerald-700';
+            } else if (type === 'warning' || type === 'local') {
+                icon = 'fa-database';
+                colorClass = 'text-amber-700';
+            }
+
+            badge.className = `text-[11px] font-medium ${colorClass} flex items-center gap-1.5 px-1`;
+            badge.innerHTML = `<i class="fas ${icon} text-xs"></i> <span>${message}</span>`;
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            ['all', 'active', 'completed'].forEach(f => {
+                const btn = document.getElementById(`filterBtn${f.charAt(0).toUpperCase() + f.slice(1)}`);
+                if (btn) {
+                    if (f === filter) {
+                        btn.className = 'px-3 py-1.5 rounded-xl smooth-transition bg-muji-text text-white font-bold';
+                    } else {
+                        btn.className = 'px-3 py-1.5 rounded-xl smooth-transition text-muji-muted hover:text-muji-text';
+                    }
+                }
+            });
+            renderTodos();
+        }
+
+        function formatTodoDueDate(dateVal) {
+            if (!dateVal) return '';
+            const str = String(dateVal).trim();
+            if (!str) return '';
+
+            const parsedDate = new Date(str);
+            if (!isNaN(parsedDate.getTime())) {
+                const y = parsedDate.getFullYear();
+                const m = String(parsedDate.getMonth() + 1).padStart(2, '0');
+                const d = String(parsedDate.getDate()).padStart(2, '0');
+                return `${y}/${m}/${d}`;
+            }
+
+            const match = str.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+            if (match) {
+                const y = match[1];
+                const m = String(match[2]).padStart(2, '0');
+                const d = String(match[3]).padStart(2, '0');
+                return `${y}/${m}/${d}`;
+            }
+
+            return str;
+        }
+
+        function renderTodos() {
+            const container = document.getElementById('todoListContainer');
+            if (!container) return;
+
+            const cntAll = todos.length;
+            const cntCompleted = todos.filter(t => t.completed).length;
+            const cntActive = cntAll - cntCompleted;
+
+            document.getElementById('cntAll').textContent = cntAll;
+            document.getElementById('cntActive').textContent = cntActive;
+            document.getElementById('cntCompleted').textContent = cntCompleted;
+
+            let filtered = todos;
+            if (currentFilter === 'active') filtered = todos.filter(t => !t.completed);
+            if (currentFilter === 'completed') filtered = todos.filter(t => t.completed);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-muji-muted text-xs font-medium">
+                        <i class="fas fa-inbox text-2xl mb-2 text-muji-border"></i>
+                        <p>目前無待辦事項</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const now = new Date();
+            const todayFormatted = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
+
+            let html = '';
+            filtered.forEach(todo => {
+                const formattedDueDate = formatTodoDueDate(todo.dueDate);
+                const isOverdue = formattedDueDate && formattedDueDate < todayFormatted && !todo.completed;
+                const isToday = formattedDueDate && formattedDueDate === todayFormatted && !todo.completed;
+
+                html += `
+                    <div class="group flex items-center justify-between p-3.5 bg-muji-pill rounded-2xl border border-transparent hover:border-muji-border smooth-transition">
+                        <div class="flex items-center gap-3 min-w-0 flex-1 pr-2">
+                            <button onclick="toggleTodo('${todo.id}')" class="text-base text-muji-muted hover:text-muji-text smooth-transition flex-shrink-0">
+                                <i class="${todo.completed ? 'fas fa-circle-check text-muji-text' : 'far fa-circle'}"></i>
+                            </button>
+                            
+                            <span class="px-2.5 py-1 rounded-xl text-[10px] font-bold bg-muji-card text-muji-text border border-muji-border flex-shrink-0">
+                                ${escapeHtml(todo.category || '工作')}
+                            </span>
+
+                            <span class="text-xs font-bold truncate ${todo.completed ? 'line-through text-muji-muted' : 'text-muji-text'}">
+                                ${escapeHtml(todo.text)}
+                            </span>
+                        </div>
+
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            ${formattedDueDate ? `
+                                <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg ${isOverdue ? 'bg-muji-redSoft text-muji-redLight' : isToday ? 'bg-amber-100 text-amber-800' : 'text-muji-muted'}">
+                                    <i class="far fa-calendar mr-1"></i>${formattedDueDate}
+                                </span>
+                            ` : ''}
+
+                            <button onclick="deleteTodo('${todo.id}')" class="text-muji-muted hover:text-muji-redLight opacity-0 group-hover:opacity-100 smooth-transition p-1">
+                                <i class="far fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function handleAddTodo(event) {
+            event.preventDefault();
+            const input = document.getElementById('newTodoInput');
+            const catSelect = document.getElementById('newTodoCategorySelect');
+            const dueDateInput = document.getElementById('newTodoDueDate');
+
+            const text = input.value.trim();
+            if (!text) return;
+
+            const category = catSelect.value || '工作';
+            const dueDate = dueDateInput.value || '';
+            const id = Date.now().toString();
+
+            const newTodo = { id, text, category, dueDate, completed: false };
+            todos.unshift(newTodo);
+            saveLocalTodosBackup();
+            renderTodos();
+
+            input.value = '';
+            dueDateInput.value = '';
+
+            if (googleScriptUrl) {
+                updateSyncStatusUI('loading', '同步至雲端...');
+                try {
+                    await fetch(`${googleScriptUrl}?action=add&id=${id}&text=${encodeURIComponent(text)}&category=${encodeURIComponent(category)}&dueDate=${dueDate}&completed=false`);
+                    updateSyncStatusUI('success', '已儲存至雲端');
+                } catch (err) {
+                    updateSyncStatusUI('warning', '已暫存於本機');
+                }
+            }
+        }
+
+        async function toggleTodo(id) {
+            const item = todos.find(t => t.id === id);
+            if (!item) return;
+
+            item.completed = !item.completed;
+            saveLocalTodosBackup();
+            renderTodos();
+
+            if (googleScriptUrl) {
+                updateSyncStatusUI('loading', '更新狀態中...');
+                try {
+                    await fetch(`${googleScriptUrl}?action=toggle&id=${id}`);
+                    updateSyncStatusUI('success', '雲端狀態已更新');
+                } catch (err) {
+                    updateSyncStatusUI('warning', '狀態已於本機更新');
+                }
+            }
+        }
+
+        async function deleteTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            saveLocalTodosBackup();
+            renderTodos();
+
+            if (googleScriptUrl) {
+                updateSyncStatusUI('loading', '刪除項目中...');
+                try {
+                    await fetch(`${googleScriptUrl}?action=delete&id=${id}`);
+                    updateSyncStatusUI('success', '已自雲端移除');
+                } catch (err) {
+                    updateSyncStatusUI('warning', '已自本機移除');
+                }
+            }
+        }
+
+        // Moto Records
+        async function fetchMotoRecordsFromCloud() {
+            const container = document.getElementById('motoListContainer');
+            const syncTimeEl = document.getElementById('motoSyncTimeText');
+            if (syncTimeEl) syncTimeEl.textContent = '同步更新中...';
+
+            if (container) {
+                container.innerHTML = `<div class="text-center py-6 text-muji-muted text-xs"><i class="fas fa-arrows-rotate fa-spin mr-1"></i> 載入雲端紀錄中...</div>`;
+            }
+
+            try {
+                const res = await fetch(MOTO_SCRIPT_URL);
+                const result = await res.json();
+
+                if (result.status === 'success' && Array.isArray(result.data)) {
+                    motoRecords = result.data;
+                    localStorage.setItem('dashboard_moto_records', JSON.stringify(motoRecords));
+                    renderMotoRecords();
+
+                    const now = new Date();
+                    const timeStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                    if (syncTimeEl) syncTimeEl.textContent = timeStr;
+                    localStorage.setItem('dashboard_moto_last_sync', timeStr);
+                } else {
+                    throw new Error('格式錯誤');
+                }
+            } catch (err) {
+                loadLocalMotoRecords();
+                if (syncTimeEl) syncTimeEl.textContent = localStorage.getItem('dashboard_moto_last_sync') || '連線失敗，使用離線資料';
+            }
+        }
+
+        function loadLocalMotoRecords() {
+            const saved = localStorage.getItem('dashboard_moto_records');
+            if (saved) {
+                try { motoRecords = JSON.parse(saved); } catch(e) { motoRecords = []; }
+            } else {
+                motoRecords = [];
+            }
+            renderMotoRecords();
+        }
+
+        function parseCostVal(val) {
+            if (!val) return 0;
+            const str = String(val).replace(/,/g, '').trim();
+            const num = parseInt(str, 10);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function renderMotoRecords() {
+            const container = document.getElementById('motoListContainer');
+            const mileageEl = document.getElementById('motoCurrentMileage');
+            const daysSinceEl = document.getElementById('motoDaysSince');
+            const viewAllBtn = document.getElementById('motoViewAllBtn');
+
+            if (!container) return;
+
+            if (motoRecords.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-muji-muted text-xs">目前無保養紀錄</div>`;
+                if (mileageEl) mileageEl.textContent = '--';
+                if (daysSinceEl) daysSinceEl.textContent = '--';
+                if (viewAllBtn) viewAllBtn.classList.add('hidden');
+                return;
+            }
+
+            const latestRecord = motoRecords[0];
+            if (latestRecord) {
+                const latestNum = parseInt(String(latestRecord.mileage).replace(/,/g, ''), 10);
+                if (mileageEl) mileageEl.textContent = !isNaN(latestNum) && latestNum > 0 ? latestNum.toLocaleString() : '--';
+                
+                if (latestRecord.date) {
+                    const lastDate = new Date(latestRecord.date.replace(/\//g, '-'));
+                    const today = new Date();
+                    const diffTime = Math.abs(today - lastDate);
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    if (daysSinceEl) daysSinceEl.textContent = isNaN(diffDays) ? '--' : diffDays;
+                }
+            }
+
+            const displayList = isMotoExpanded ? motoRecords : motoRecords.slice(0, 3);
+
+            let html = '';
+            displayList.forEach(r => {
+                const costVal = parseCostVal(r.cost);
+
+                html += `
+                    <div class="p-4 bg-muji-pill rounded-2xl border border-transparent hover:border-muji-border smooth-transition space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-muji-text"><i class="far fa-calendar mr-1"></i>${r.date || ''}</span>
+                                ${r.interval && r.interval !== '-' ? `<span class="text-[10px] font-mono bg-muji-card px-2 py-0.5 rounded-full text-muji-text font-bold border border-muji-border">隔 ${r.interval} 天</span>` : ''}
+                            </div>
+                            <span class="text-xs font-black font-mono text-muji-text">$${costVal.toLocaleString()}</span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-1.5 text-[11px]">
+                            ${r.routine && r.routine !== '-' ? `<span class="bg-muji-k90 text-white font-bold px-2 py-0.5 rounded-md">日常：${escapeHtml(r.routine)}</span>` : ''}
+                            ${r.unexpected && r.unexpected !== '-' ? `<span class="bg-muji-redLight text-white font-bold px-2 py-0.5 rounded-md">突發：${escapeHtml(r.unexpected)}</span>` : ''}
+                        </div>
+
+                        <div class="flex items-center justify-between text-[10px] text-muji-muted pt-1 border-t border-black/5">
+                            <span>📍 保養所：${escapeHtml(r.shop || '未設定')}</span>
+                            <span>里程：${r.mileage ? r.mileage.toLocaleString() : '--'} km</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            if (viewAllBtn) {
+                if (motoRecords.length > 3) {
+                    viewAllBtn.classList.remove('hidden');
+                    viewAllBtn.textContent = isMotoExpanded ? '收合紀錄' : `查看全部紀錄 (${motoRecords.length})`;
+                } else {
+                    viewAllBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        function toggleMotoRecords() {
+            isMotoExpanded = !isMotoExpanded;
+            renderMotoRecords();
+        }
+
+        function openMotoModal() {
+            document.getElementById('motoDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('motoMileage').value = '';
+            document.getElementById('motoRoutine').value = '';
+            document.getElementById('motoUnexpected').value = '';
+            document.getElementById('motoCost').value = '0';
+            document.getElementById('motoNote').value = '';
+            document.getElementById('motoModal').classList.remove('hidden');
+            document.getElementById('motoModal').classList.add('flex');
+        }
+
+        function closeMotoModal() {
+            document.getElementById('motoModal').classList.add('hidden');
+            document.getElementById('motoModal').classList.remove('flex');
+        }
+
+        function appendMotoRoutine(itemText) {
+            const routineInput = document.getElementById('motoRoutine');
+            let current = routineInput.value.trim();
+            if (current) {
+                current += `、${itemText}`;
+            } else {
+                current = itemText;
+            }
+            routineInput.value = current;
+            autoCalculateCost();
+        }
+
+        function autoCalculateCost() {
+            const routineStr = document.getElementById('motoRoutine').value;
+            const unexpectedStr = document.getElementById('motoUnexpected').value;
+            const combined = `${routineStr} ${unexpectedStr}`;
+            
+            const matches = combined.match(/\d+/g);
+            let total = 0;
+            if (matches) {
+                matches.forEach(m => {
+                    const val = parseInt(m, 10);
+                    if (!isNaN(val) && val < 50000) total += val;
+                });
+            }
+            document.getElementById('motoCost').value = total;
+        }
+
+        async function handleSaveMoto(event) {
+            event.preventDefault();
+            const btn = event.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 儲存中...';
+            btn.disabled = true;
+
+            const dateVal = document.getElementById('motoDate').value;
+            let intervalDays = '-';
+            if (motoRecords && motoRecords.length > 0 && motoRecords[0].date) {
+                const lastDate = new Date(motoRecords[0].date.replace(/\//g, '-'));
+                const newDate = new Date(dateVal);
+                intervalDays = Math.ceil(Math.abs(newDate - lastDate) / (1000 * 60 * 60 * 24));
+            }
+
+            const newRecord = {
+                date: dateVal.replace(/-/g, '/'),
+                interval: intervalDays,
+                mileage: parseInt(document.getElementById('motoMileage').value, 10) || 0,
+                routine: document.getElementById('motoRoutine').value.trim() || '-',
+                unexpected: document.getElementById('motoUnexpected').value.trim() || '-',
+                cost: parseInt(document.getElementById('motoCost').value, 10) || 0,
+                shop: document.getElementById('motoShop').value,
+                note: document.getElementById('motoNote').value.trim()
+            };
+
+            try {
+                await fetch(MOTO_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(newRecord)
+                });
+                closeMotoModal();
+                fetchMotoRecordsFromCloud();
+            } catch (err) {
+                console.error('Save failed:', err);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Calendar & Courses
+        async function fetchGoogleCalendar() {
+            if (!calendarScriptUrl) {
+                coursesList = deduplicateCourses(defaultCoursesList);
+                renderCalendar();
+                return;
+            }
+            try {
+                const res = await fetch(calendarScriptUrl);
+                const data = await res.json();
+                if (data.status === 'success' && Array.isArray(data.courses)) {
+                    coursesList = deduplicateCourses([...data.courses, ...defaultCoursesList]);
+                } else {
+                    coursesList = deduplicateCourses(defaultCoursesList);
+                }
+            } catch (err) {
+                coursesList = deduplicateCourses(defaultCoursesList);
+            }
+            renderCalendar();
+        }
+
+        function deduplicateCourses(list) {
+            const unique = [];
+            const map = new Set();
+            list.forEach(c => {
+                const dateKey = c.dateStart || c.date || '';
+                const cleanTitle = (c.title || '').trim().replace(/[【】\s]/g, '');
+                const timeKey = (c.time || '').trim().replace(/\s/g, '');
+                const key = `${dateKey}_${cleanTitle}_${timeKey}`;
+                if (!map.has(key)) {
+                    map.add(key);
+                    unique.push(c);
+                }
+            });
+            return unique;
+        }
+
+        function prevMonth() {
+            calendarMonth--;
+            if (calendarMonth < 0) {
+                calendarMonth = 11;
+                calendarYear--;
+            }
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            calendarMonth++;
+            if (calendarMonth > 11) {
+                calendarMonth = 0;
+                calendarYear++;
+            }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const labelEl = document.getElementById('calendarMonthYearLabel');
+            const gridEl = document.getElementById('calendarGrid');
+            if (!labelEl || !gridEl) return;
+
+            labelEl.textContent = `${calendarYear} 年 ${calendarMonth + 1} 月`;
+
+            const firstDayIndex = new Date(calendarYear, calendarMonth, 1).getDay();
+            const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+            const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+            let html = '';
+            for (let i = 0; i < adjustedFirstDay; i++) {
+                html += `<div class="h-10"></div>`;
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                const dayCourses = coursesList.filter(c => {
+                    if (c.dateStart && c.dateEnd) {
+                        return dayStr >= c.dateStart && dayStr <= c.dateEnd;
+                    }
+                    return c.dateStart === dayStr;
+                });
+
+                const hasCourse = dayCourses.length > 0;
+                const isSelected = dayStr === selectedDateStr;
+                const isPast = dayStr < todayStr;
+
+                let dayBg = 'hover:bg-muji-pill text-muji-text';
+                if (hasCourse) {
+                    if (isPast) {
+                        dayBg = isSelected ? 'bg-zinc-300 text-zinc-800 font-black ring-2 ring-muji-text' : 'bg-zinc-300 text-zinc-700 font-bold';
+                    } else {
+                        dayBg = isSelected ? 'bg-muji-text text-white font-black shadow-md' : 'bg-muji-text text-white font-bold';
+                    }
+                } else if (isSelected) {
+                    dayBg = 'bg-muji-pill text-muji-text font-black ring-2 ring-muji-text';
+                }
+
+                html += `
+                    <div onclick="selectCalendarDate('${dayStr}')" class="h-10 flex items-center justify-center cursor-pointer smooth-transition">
+                        <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs ${dayBg}">
+                            ${day}
+                        </span>
+                    </div>
+                `;
+            }
+
+            gridEl.innerHTML = html;
+            renderSelectedDateCourses();
+            updateFocusTaskWidget();
+        }
+
+        function selectCalendarDate(dateStr) {
+            selectedDateStr = dateStr;
+            renderCalendar();
+        }
+
+        function renderSelectedDateCourses() {
+            const dateTextEl = document.getElementById('selectedDateText');
+            const coursesContainer = document.getElementById('selectedDateCourses');
+            if (!coursesContainer) return;
+
+            const [y, m, d] = selectedDateStr.split('-').map(Number);
+            dateTextEl.textContent = `📅 ${m}月 ${d}日 課程清單`;
+
+            const dayCourses = coursesList.filter(c => {
+                if (c.dateStart && c.dateEnd) {
+                    return selectedDateStr >= c.dateStart && selectedDateStr <= c.dateEnd;
+                }
+                return c.dateStart === selectedDateStr;
+            });
+
+            if (dayCourses.length === 0) {
+                coursesContainer.innerHTML = `<div class="text-xs text-muji-muted py-2">當日無安排課程</div>`;
+                return;
+            }
+
+            let html = '';
+            dayCourses.forEach(c => {
+                html += `
+                    <div class="bg-muji-card p-3.5 rounded-xl border border-muji-border space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-muji-text">${escapeHtml(c.title)}</span>
+                            <span class="text-[10px] font-mono font-bold bg-muji-pill px-2 py-0.5 rounded-md text-muji-text">${c.time}</span>
+                        </div>
+                        <p class="text-xs text-muji-muted font-normal flex items-center gap-1">
+                            <span>📍</span> ${escapeHtml(c.location || '群亞訓練中心-4樓4B')}
+                            ${c.teacher ? `<span class="ml-2">👨‍🏫 講師：${escapeHtml(c.teacher)}</span>` : ''}
+                        </p>
+                        ${c.desc ? `<p class="text-xs text-muji-muted font-normal leading-relaxed pt-1 border-t border-muji-border/60">${escapeHtml(c.desc)}</p>` : ''}
+                    </div>
+                `;
+            });
+
+            coursesContainer.innerHTML = html;
+        }
+
+        function updateFocusTaskWidget() {
+            const focusTitle = document.getElementById('focusTaskTitle');
+            const focusDesc = document.getElementById('focusTaskDesc');
+            const focusCategory = document.getElementById('focusTaskCategory');
+            const focusDueDate = document.getElementById('focusTaskDueDate');
+
+            if (!focusTitle) return;
+
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+            const upcomingCourses = coursesList.filter(c => {
+                const cDate = c.dateStart || c.date;
+                return cDate >= todayStr;
+            }).sort((a, b) => {
+                const dateA = a.dateStart || a.date;
+                const dateB = b.dateStart || b.date;
+                if (dateA !== dateB) return dateA.localeCompare(dateB);
+                return (a.time || '').localeCompare(b.time || '');
+            });
+
+            if (upcomingCourses.length > 0) {
+                const nextCourse = upcomingCourses[0];
+                const courseDateStr = nextCourse.dateStart || nextCourse.date;
+                const [y, m, d] = courseDateStr.split('-');
+                
+                let dayDiffText = '';
+                if (courseDateStr === todayStr) {
+                    dayDiffText = '🔥 今天上課';
+                } else {
+                    const courseDateObj = new Date(courseDateStr);
+                    const todayObj = new Date(todayStr);
+                    const diffDays = Math.ceil((courseDateObj - todayObj) / (1000 * 60 * 60 * 24));
+                    dayDiffText = `⏳ 還有 ${diffDays} 天`;
+                }
+
+                focusTitle.textContent = nextCourse.title;
+                
+                let descText = `📍 ${nextCourse.location || '群亞訓練中心-4樓4B'}`;
+                if (nextCourse.teacher) descText += ` ｜ 👨‍🏫 講師：${nextCourse.teacher}`;
+                if (nextCourse.desc) descText += `\n📖 ${nextCourse.desc}`;
+
+                focusDesc.textContent = descText;
+                focusCategory.textContent = dayDiffText;
+                const weekDays = ['日','一','二','三','四','五','六'];
+                const dayOfWeek = weekDays[new Date(courseDateStr.replace(/-/g, '/')).getDay()];
+                focusDueDate.textContent = `📅 ${parseInt(m, 10)}月 ${parseInt(d, 10)}日 (星期${dayOfWeek}) ${nextCourse.time || ''}`;
+            } else {
+                focusTitle.textContent = '🎉 近期無排定課程';
+                focusDesc.textContent = '目前無未來的課程行程，好好放鬆一下吧！';
+                focusCategory.textContent = '課表空閒中';
+                focusDueDate.textContent = '📅 無近期行程';
+            }
+        }
+
+        // Settings Modal
+        function openSyncSettingsModal() {
+            document.getElementById('scriptUrlInput').value = googleScriptUrl;
+            document.getElementById('stockScriptUrlInput').value = stockScriptUrl;
+            if (document.getElementById('subScriptUrlInput')) {
+                document.getElementById('subScriptUrlInput').value = subScriptUrl;
+            }
+            if (document.getElementById('motoScriptUrlInput')) {
+                document.getElementById('motoScriptUrlInput').value = MOTO_SCRIPT_URL;
+            }
+            const toast = document.getElementById('settingsToastMsg');
+            if (toast) toast.classList.add('hidden');
+            const modal = document.getElementById('syncSettingsModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeSyncSettingsModal() {
+            const modal = document.getElementById('syncSettingsModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveSyncSettings(event) {
+            if (event) event.preventDefault();
+
+            const inputUrl = document.getElementById('scriptUrlInput').value.trim();
+            const stockUrl = document.getElementById('stockScriptUrlInput').value.trim();
+            const subUrl = document.getElementById('subScriptUrlInput')?.value.trim() || inputUrl;
+            const motoUrl = document.getElementById('motoScriptUrlInput')?.value.trim() || MOTO_SCRIPT_URL;
+
+            googleScriptUrl = inputUrl;
+            stockScriptUrl = stockUrl;
+            subScriptUrl = subUrl;
+
+            localStorage.setItem('dashboard_google_script_url', inputUrl);
+            localStorage.setItem('dashboard_stock_script_url', stockUrl);
+            localStorage.setItem('dashboard_sub_script_url', subUrl);
+            localStorage.setItem('dashboard_moto_script_url', motoUrl);
+
+            const toast = document.getElementById('settingsToastMsg');
+            if (toast) {
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                    closeSyncSettingsModal();
+                    fetchTodosFromCloud();
+                    fetchGoogleCalendar();
+                    fetchSubscriptionsFromCloud();
+                    fetchStocksFromCloud();
+                    fetchMotoRecordsFromCloud();
+                }, 800);
+            } else {
+                closeSyncSettingsModal();
+                fetchTodosFromCloud();
+                fetchGoogleCalendar();
+                fetchSubscriptionsFromCloud();
+                fetchStocksFromCloud();
+                fetchMotoRecordsFromCloud();
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>
