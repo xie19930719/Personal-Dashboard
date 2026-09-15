@@ -94,7 +94,7 @@
                 </p>
                 <div class="flex items-center gap-3 mt-3">
                     <span id="clockText" class="text-lg font-black font-mono tracking-tight text-muji-text bg-muji-card px-3.5 py-1 rounded-xl border border-muji-border shadow-soft">00:00:00</span>
-                    <span id="fullDateText" class="text-xs font-semibold text-muji-muted">2026年 9月 4日 星期五</span>
+                    <span id="fullDateText" class="text-xs font-semibold text-muji-muted">2026年 9月 15日 星期二</span>
                     
                     <button onclick="lockDashboard()" class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl text-xs font-bold bg-muji-card text-muji-text hover:bg-muji-pill border border-muji-border shadow-soft smooth-transition ml-auto md:ml-0" title="鎖定儀表板">
                         <i class="fas fa-lock text-xs"></i> 鎖定
@@ -232,7 +232,6 @@
                             </button>
                         </div>
 
-                        <!-- 機車保養紀錄同步時間戳記 -->
                         <div class="flex items-center justify-between text-[11px] text-muji-muted pt-0.5">
                             <div class="flex items-center gap-1.5">
                                 <i class="far fa-clock text-xs"></i>
@@ -281,7 +280,6 @@
                             <h3 class="font-extrabold text-lg tracking-tight text-muji-text">庫存股票市值</h3>
                             <span class="text-xs text-muji-muted font-normal">Portfolio</span>
                         </div>
-                        <!-- 同步成功才顯示 -->
                         <span id="stockSyncStatusBadge" class="hidden text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full items-center gap-1">
                             <i class="fas fa-cloud-arrow-up text-[10px]"></i> 已同步 Google 試算表
                         </span>
@@ -310,7 +308,6 @@
                         </div>
                     </div>
 
-                    <!-- 最後同步時間與手動更新按鈕 -->
                     <div class="flex items-center justify-between text-[11px] text-muji-muted px-1">
                         <div class="flex items-center gap-1.5">
                             <i class="far fa-clock text-xs"></i>
@@ -405,7 +402,6 @@
                             </div>
                         </div>
 
-                        <!-- 待辦事項同步時間戳記 -->
                         <div class="flex items-center justify-between text-[11px] text-muji-muted pt-0.5">
                             <div class="flex items-center gap-1.5">
                                 <i class="far fa-clock text-xs"></i>
@@ -668,6 +664,12 @@
             </div>
 
             <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-muji-text">課程月曆 API 網址</label>
+                <input type="url" id="calendarScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
+                    class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
+            </div>
+
+            <div class="space-y-1.5">
                 <label class="block text-xs font-bold text-muji-text">機車保養紀錄 API 網址</label>
                 <input type="url" id="motoScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
                     class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
@@ -713,7 +715,7 @@
 
     <script>
         // Global State & Config
-        const FIXED_PASSWORD = '7929';
+        const FIXED_PASSWORD = '0000';
         let todos = [];
         let currentFilter = 'all';
         let categories = ['工作', '生活', '運動', '學習'];
@@ -737,52 +739,27 @@
             { id: 'sub_4', name: 'Netflix 高級方案', category: '影音娛樂', amount: 390, cycle: 'monthly', payDay: '15', note: '家庭共用' }
         ];
 
-        // Default Courses Data (24-session complete curriculum)
+        // Default Courses Data
         const defaultCoursesList = [
-            { id: 'c1', dateStart: '2026-08-15', dateEnd: '2026-08-15', time: '09:00 - 12:00', title: '【AI協作思維與提示詞實務】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.生成式AI邏輯架構與演算法原理。2.Prompt操作能力建構：提升AI輸出品質' },
-            { id: 'c2', dateStart: '2026-08-15', dateEnd: '2026-08-15', time: '13:00 - 17:00', title: '【AI智慧視覺語義與風格建構】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.跨模態視覺風格轉譯：實現語意到視覺風格的精準轉換。2.圖像細節增補：透過AI強化視覺素材細節與解析度' },
-            { id: 'c3', dateStart: '2026-08-22', dateEnd: '2026-08-22', time: '09:00 - 12:00', title: '【AI輔助品牌識別設計實務】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.智慧化品牌構思與原型開發：運用AI進行Logo創意發想。2.設計工作流整合與完稿：將AI概念轉化為商業應用之視覺資產。' },
-            { id: 'c4', dateStart: '2026-08-22', dateEnd: '2026-08-22', time: '13:00 - 17:00', title: '【品牌IP角色建構】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.企業形象代言人系統化設計：建構具識別度之企業數位公仔。2.AI角色從2D設計到3D多視角展示。3.智慧構圖與參數調節技巧(一)' },
-            { id: 'c5', dateStart: '2026-08-29', dateEnd: '2026-08-29', time: '09:00 - 12:00', title: '【智慧化視覺應用】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.智慧構圖與參數調節技巧(二)：提升商業視覺與活動訊息的傳達效率。2.AI數位場景擬真應用。' },
-            { id: 'c6', dateStart: '2026-08-29', dateEnd: '2026-08-29', time: '13:00 - 17:00', title: '【AI助理在企業的實戰應用(一)】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.數位化資訊整理：利用AI將散亂資訊轉化為結構化企業知識庫。2.數位資產自動化重建。3.運用AI視覺邏輯強化版面布局優化' },
-            { id: 'c7', dateStart: '2026-09-05', dateEnd: '2026-09-05', time: '09:00 - 12:00', title: '【AI助理在企業的實戰應用(二)】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.運用AI視覺邏輯強化版面布局優化與專業度。2.客製化風格開發。3.跨平台智慧協作。' },
-            { id: 'c8', dateStart: '2026-09-05', dateEnd: '2026-09-05', time: '13:00 - 17:00', title: '【AI智慧影音策劃】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.數位驅動之市場洞察：產出高轉換率腳本與分鏡提示詞。2.多模態素材生成。3.掌握影片編輯技能。' },
-            { id: 'c9', dateStart: '2026-09-12', dateEnd: '2026-09-12', time: '09:00 - 12:00', title: '【AI智慧影音剪輯與後製】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.AI協作文字生成影片的行銷應用。2.運用AI進行圖片轉影片及動態素材。3.自動化完成字幕與特效佈署等後製與輸出。' },
-            { id: 'c10', dateStart: '2026-09-12', dateEnd: '2026-09-12', time: '13:00 - 17:00', title: '【AI智慧影音配樂】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.AI視覺感知與感官配樂：辨識影片情緒並產出專屬音樂。2.影音智慧定位務：自動化影音同步技術，提升宣傳片完整度。' },
-            { id: 'c11', dateStart: '2026-09-19', dateEnd: '2026-09-19', time: '09:00 - 12:00', title: '【智慧圖像處理實務】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.AI高階商用圖像修飾與智慧優化。2.AI作視覺合成：多場景模擬、行銷情境應用。' },
-            { id: 'c12', dateStart: '2026-09-19', dateEnd: '2026-09-19', time: '13:00 - 17:00', title: '【精準行銷與整合應用】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.AI自動產出精準行銷文宣與策略生成。2.視覺情境整合輸出實務。' },
-            { id: 'c13', dateStart: '2026-08-30', dateEnd: '2026-08-30', time: '09:00 - 12:00', title: '【AI行銷時代的全貌與產業模式】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.AI如何重新定義商品銷售的流程 2.熟悉主要AI工具應用' },
-            { id: 'c14', dateStart: '2026-08-30', dateEnd: '2026-08-30', time: '13:00 - 16:00', title: '【選品策略與市場分析】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.使用AI語言模型生成熱門品類關鍵字分析 2.操作電商平台熱搜，進行產品市場熱度調查' },
-            { id: 'c15', dateStart: '2026-09-06', dateEnd: '2026-09-06', time: '09:00 - 12:00', title: '【AI腳本撰寫與吸睛文案技巧】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.利用AI語言模型編寫不同行銷腳本 2.快速生成商品標題、痛點文案與行動呼籲CTA' },
-            { id: 'c16', dateStart: '2026-09-06', dateEnd: '2026-09-06', time: '13:00 - 16:00', title: '【AI圖像生成與商品圖優化】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.使用Canva設計商品促銷圖 2.操作商品圖去背與背景替換，製作差異化商品圖' },
-            { id: 'c17', dateStart: '2026-09-13', dateEnd: '2026-09-13', time: '09:00 - 12:00', title: '【短影音腳本與分鏡設計】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.拍攝商品短影音運鏡技巧 2.掌握影像節奏、字幕搭配' },
-            { id: 'c18', dateStart: '2026-09-13', dateEnd: '2026-09-13', time: '13:00 - 16:00', title: '【AI短影音剪輯與生成】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.使用短影音範本製作30秒行銷影片 2.導入AI語言模型生成AI配音與過場動畫' },
-            { id: 'c19', dateStart: '2026-09-20', dateEnd: '2026-09-20', time: '09:00 - 12:00', title: '【AI虛擬角色創意設計】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.廣告聲優行銷語音手機錄製 2.合成虛擬人物語音與影片至商品內容' },
-            { id: 'c20', dateStart: '2026-09-20', dateEnd: '2026-09-20', time: '13:00 - 16:00', title: '【打造個人行銷IP與直播導購企劃】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.AI協助規劃直播節目規劃 2.建立個人品牌風格行銷策略' },
-            { id: 'c21', dateStart: '2026-10-04', dateEnd: '2026-10-04', time: '09:00 - 12:00', title: '【善用Google廣告驅動電商與行銷轉單】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.學會設計有效的廣告策略並針對產品優化 2.建立關鍵字廣告與再行銷活動' },
-            { id: 'c22', dateStart: '2026-10-04', dateEnd: '2026-10-04', time: '13:00 - 16:00', title: '【Google Ads廣告策略規劃邏輯】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.建立有轉換力的廣告素材 2.選擇合適的廣告類型與格式' },
-            { id: 'c23', dateStart: '2026-10-11', dateEnd: '2026-10-11', time: '09:00 - 12:00', title: '【AI短影音媒體創作】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.有故事性的短影音內容 2.AI動態影片分鏡生成技巧' },
-            { id: 'c24', dateStart: '2026-10-11', dateEnd: '2026-10-11', time: '13:00 - 16:00', title: '【AI短影音剪輯與廣告內容】', teacher: '陳瑜芳', location: '群亞訓練中心-4樓4B', desc: '1.融入商業產品或品牌內容 2.情境式行銷效果遠勝直接廣告' }
+            { id: 'c1', dateStart: '2026-08-15', dateEnd: '2026-08-15', time: '09:00 - 12:00', title: '【AI協作思維與提示詞實務】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.生成式AI邏輯架構與演算法原理。2.Prompt操作能力建構：提升AI輸出品質' }
         ];
 
         let coursesList = [...defaultCoursesList];
 
-        // API Endpoint URLs
+        // API Endpoint URLs (已自動更新為您的最新部署網址)
         const MOTO_SCRIPT_URL = localStorage.getItem('dashboard_moto_script_url') || 'https://script.google.com/macros/s/AKfycbzONpfqthWmWYT7U0WnLbWo1dp0CmXnohNkgBb4fhAATTpJolIMDKKb_C64gUMppeUm/exec';
-        const NEW_DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby94KI5QIR7enJaySoimJcj0aNfw9T0oWyi26i3BLFtqBqbnQJm9TdS0z4mNivLxzrt/exec';
-        let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || NEW_DEFAULT_SCRIPT_URL;
+        const LATEST_DEPLOYED_URL = 'https://script.google.com/macros/s/AKfycbyP1eH7O2-9Mm9BFw-2iBMSjPawBJbgn-8-_FTeAjMHQ5C-T5HjoQopAP2opKMpFPdB/exec';
+        
+        let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || LATEST_DEPLOYED_URL;
         let stockScriptUrl = localStorage.getItem('dashboard_stock_script_url') || 'https://script.google.com/macros/s/AKfycbzvKPGYxfKNeTvN5c2h4ouoicUeNLjD7UmphVUIzcsFh4sMtexJ6mgoJsERcwr6CS8k/exec';
-        let calendarScriptUrl = localStorage.getItem('dashboard_calendar_script_url') || 'https://script.google.com/macros/s/AKfycbycIO7NeF6w5EYR3S4eYBn_ZgC-ONUReRkUZBaW23eqQxqi5SsDmk-KchmwczPM3h8H/exec';
-        let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || googleScriptUrl;
+        let calendarScriptUrl = localStorage.getItem('dashboard_calendar_script_url') || LATEST_DEPLOYED_URL;
+        let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || LATEST_DEPLOYED_URL;
 
         window.addEventListener('DOMContentLoaded', () => {
-            if (!localStorage.getItem('dashboard_google_script_url') || localStorage.getItem('dashboard_google_script_url').includes('AKfycbzjYomS')) {
-                googleScriptUrl = NEW_DEFAULT_SCRIPT_URL;
-                localStorage.setItem('dashboard_google_script_url', NEW_DEFAULT_SCRIPT_URL);
-            }
-            if (!localStorage.getItem('dashboard_sub_script_url') || localStorage.getItem('dashboard_sub_script_url').includes('AKfycbzjYomS')) {
-                subScriptUrl = NEW_DEFAULT_SCRIPT_URL;
-                localStorage.setItem('dashboard_sub_script_url', NEW_DEFAULT_SCRIPT_URL);
+            // 自動修復並切換為最新的 API 網址
+            if (!localStorage.getItem('dashboard_calendar_script_url') || localStorage.getItem('dashboard_calendar_script_url').includes('AKfycbwugtcCR')) {
+                calendarScriptUrl = LATEST_DEPLOYED_URL;
+                localStorage.setItem('dashboard_calendar_script_url', LATEST_DEPLOYED_URL);
             }
 
             checkLockState();
@@ -988,7 +965,7 @@
                 return;
             }
             try {
-                const res = await fetch(`${subScriptUrl}?action=get`);
+                const res = await fetch(`${subScriptUrl}?action=getSubs`);
                 const data = await res.json();
                 if (data.status === 'success' && Array.isArray(data.subscriptions)) {
                     subscriptions = data.subscriptions;
@@ -1423,7 +1400,7 @@
             }
 
             try {
-                const res = await fetch(`${googleScriptUrl}?action=get`);
+                const res = await fetch(`${googleScriptUrl}?action=getTodos`);
                 const data = await res.json();
 
                 if (data.status === 'success' && Array.isArray(data.todos)) {
@@ -1867,24 +1844,33 @@
             }
         }
 
-        // Calendar & Courses
+        // Calendar & Courses (讀取試算表並解析民國年)
         async function fetchGoogleCalendar() {
+            const focusTitle = document.getElementById('focusTaskTitle');
+            if (focusTitle && focusTitle.textContent.includes('載入')) {
+                focusTitle.textContent = '連線雲端課表中...';
+            }
+
             if (!calendarScriptUrl) {
-                coursesList = deduplicateCourses(defaultCoursesList);
+                coursesList = deduplicateCourses([]);
                 renderCalendar();
                 return;
             }
+
             try {
-                const res = await fetch(calendarScriptUrl);
+                const res = await fetch(`${calendarScriptUrl}?action=getCourses`);
                 const data = await res.json();
-                if (data.status === 'success' && Array.isArray(data.courses)) {
-                    coursesList = deduplicateCourses([...data.courses, ...defaultCoursesList]);
+
+                if (data.status === 'success' && Array.isArray(data.courses) && data.courses.length > 0) {
+                    coursesList = deduplicateCourses(data.courses);
                 } else {
-                    coursesList = deduplicateCourses(defaultCoursesList);
+                    coursesList = deduplicateCourses([]);
                 }
             } catch (err) {
-                coursesList = deduplicateCourses(defaultCoursesList);
+                console.warn('雲端課表連線失敗:', err);
+                coursesList = deduplicateCourses([]);
             }
+
             renderCalendar();
         }
 
@@ -2087,6 +2073,9 @@
             if (document.getElementById('subScriptUrlInput')) {
                 document.getElementById('subScriptUrlInput').value = subScriptUrl;
             }
+            if (document.getElementById('calendarScriptUrlInput')) {
+                document.getElementById('calendarScriptUrlInput').value = calendarScriptUrl;
+            }
             if (document.getElementById('motoScriptUrlInput')) {
                 document.getElementById('motoScriptUrlInput').value = MOTO_SCRIPT_URL;
             }
@@ -2109,15 +2098,18 @@
             const inputUrl = document.getElementById('scriptUrlInput').value.trim();
             const stockUrl = document.getElementById('stockScriptUrlInput').value.trim();
             const subUrl = document.getElementById('subScriptUrlInput')?.value.trim() || inputUrl;
+            const calendarUrl = document.getElementById('calendarScriptUrlInput')?.value.trim() || calendarScriptUrl;
             const motoUrl = document.getElementById('motoScriptUrlInput')?.value.trim() || MOTO_SCRIPT_URL;
 
             googleScriptUrl = inputUrl;
             stockScriptUrl = stockUrl;
             subScriptUrl = subUrl;
+            calendarScriptUrl = calendarUrl;
 
             localStorage.setItem('dashboard_google_script_url', inputUrl);
             localStorage.setItem('dashboard_stock_script_url', stockUrl);
             localStorage.setItem('dashboard_sub_script_url', subUrl);
+            localStorage.setItem('dashboard_calendar_script_url', calendarUrl);
             localStorage.setItem('dashboard_moto_script_url', motoUrl);
 
             const toast = document.getElementById('settingsToastMsg');
