@@ -646,7 +646,7 @@
             </div>
             
             <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-muji-text">待辦事項 Google 試算表 API 網址 (獨立試算表)</label>
+                <label class="block text-xs font-bold text-muji-text">待辦事項 API 網址</label>
                 <input type="url" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
                     class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
             </div>
@@ -658,7 +658,7 @@
             </div>
 
             <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-muji-text">每月訂閱支出 API 網址</label>
+                <label class="block text-xs font-bold text-muji-text">每月訂閱支出 API 網址 (獨立試算表)</label>
                 <input type="url" id="subScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
                     class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
             </div>
@@ -715,7 +715,7 @@
 
     <script>
         // Global State & Config
-        const FIXED_PASSWORD = '0000';
+        const FIXED_PASSWORD = '7929';
         let todos = [];
         let currentFilter = 'all';
         let categories = ['工作', '生活', '運動', '學習'];
@@ -730,7 +730,7 @@
         let calendarMonth = todayNow.getMonth();
         let selectedDateStr = `${todayNow.getFullYear()}-${String(todayNow.getMonth() + 1).padStart(2, '0')}-${String(todayNow.getDate()).padStart(2, '0')}`;
 
-        // Subscriptions & Fixed Expenses State
+        // Subscriptions State
         let subscriptions = [];
         const defaultSubscriptions = [
             { id: 'sub_1', name: 'Claude Pro', category: '開發工具', amount: 640, cycle: 'monthly', payDay: '1', note: 'AI 協作訂閱' },
@@ -746,21 +746,22 @@
 
         let coursesList = [...defaultCoursesList];
 
-        // API Endpoint URLs (已自動更新待辦事項專屬獨立 API 網址)
+        // API Endpoint URLs (已自動替換固定支出獨立 API 網址)
         const MOTO_SCRIPT_URL = localStorage.getItem('dashboard_moto_script_url') || 'https://script.google.com/macros/s/AKfycbzONpfqthWmWYT7U0WnLbWo1dp0CmXnohNkgBb4fhAATTpJolIMDKKb_C64gUMppeUm/exec';
         const LATEST_COURSE_URL = 'https://script.google.com/macros/s/AKfycbyP1eH7O2-9Mm9BFw-2iBMSjPawBJbgn-8-_FTeAjMHQ5C-T5HjoQopAP2opKMpFPdB/exec';
         const LATEST_TODO_URL = 'https://script.google.com/macros/s/AKfycbw7YarDCVyNPuF95yQTAatquXso4vCsGF0iPkMzKx18Q2CQYhhdBRvt041_8ZoRJk8/exec';
+        const LATEST_SUB_URL = 'https://script.google.com/macros/s/AKfycbzqkgikFvwekUVwRiuw0WdqsZQt5cU4ic3i-uR93i4_FufWXZhjoxuBEWgtpctwaHHm/exec';
         
         let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || LATEST_TODO_URL;
         let stockScriptUrl = localStorage.getItem('dashboard_stock_script_url') || 'https://script.google.com/macros/s/AKfycbzvKPGYxfKNeTvN5c2h4ouoicUeNLjD7UmphVUIzcsFh4sMtexJ6mgoJsERcwr6CS8k/exec';
         let calendarScriptUrl = localStorage.getItem('dashboard_calendar_script_url') || LATEST_COURSE_URL;
-        let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || LATEST_COURSE_URL;
+        let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || LATEST_SUB_URL;
 
         window.addEventListener('DOMContentLoaded', () => {
-            // 自動修復並切換待辦事項為最新的獨立 API 網址
-            if (!localStorage.getItem('dashboard_google_script_url') || localStorage.getItem('dashboard_google_script_url').includes('AKfycby94KI5')) {
-                googleScriptUrl = LATEST_TODO_URL;
-                localStorage.setItem('dashboard_google_script_url', LATEST_TODO_URL);
+            // 自動更新固定支出的 LocalStorage 快取網址
+            if (!localStorage.getItem('dashboard_sub_script_url') || localStorage.getItem('dashboard_sub_script_url').includes('AKfycbyP1eH7O2')) {
+                subScriptUrl = LATEST_SUB_URL;
+                localStorage.setItem('dashboard_sub_script_url', LATEST_SUB_URL);
             }
 
             checkLockState();
@@ -771,7 +772,6 @@
             loadQuickNote();
             renderCategorySelect();
 
-            // 讀取快取的更新時間顯示
             const cachedStockTime = localStorage.getItem('dashboard_stock_last_sync');
             if (cachedStockTime && document.getElementById('stockSyncTimeText')) {
                 document.getElementById('stockSyncTimeText').textContent = cachedStockTime;
@@ -833,133 +833,7 @@
             return `${y}-${m}-${d}`;
         }
 
-        // Stocks Fetch & Render
-        async function fetchStocksFromCloud() {
-            const syncBadge = document.getElementById('stockSyncStatusBadge');
-            const syncTimeEl = document.getElementById('stockSyncTimeText');
-            
-            if (syncTimeEl) {
-                syncTimeEl.textContent = '同步更新中...';
-            }
-
-            if (!stockScriptUrl) {
-                loadDefaultStocks();
-                return;
-            }
-            try {
-                const res = await fetch(stockScriptUrl);
-                const data = await res.json();
-                if (data.status === 'success' && Array.isArray(data.stocks)) {
-                    renderStocks(data.totalMarketValue || 0, data.totalCost || 0, data.totalProfit || 0, data.totalProfitPercent || 0, data.stocks);
-                    
-                    if (syncBadge) {
-                        syncBadge.classList.remove('hidden');
-                        syncBadge.classList.add('inline-flex');
-                    }
-
-                    const now = new Date();
-                    const timeStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-                    if (syncTimeEl) {
-                        syncTimeEl.textContent = timeStr;
-                    }
-                    localStorage.setItem('dashboard_stock_last_sync', timeStr);
-                } else {
-                    loadDefaultStocks();
-                }
-            } catch (err) {
-                console.warn('Stocks fetch error, fallback:', err);
-                loadDefaultStocks();
-                if (syncBadge) {
-                    syncBadge.classList.add('hidden');
-                    syncBadge.classList.remove('inline-flex');
-                }
-                if (syncTimeEl) {
-                    syncTimeEl.textContent = localStorage.getItem('dashboard_stock_last_sync') || '連線失敗，使用離線資料';
-                }
-            }
-        }
-
-        function loadDefaultStocks() {
-            const fallbackStocks = [
-                { name: '台積電', symbol: '2330', price: 2420, shares: 312, avgCost: 852.09, itemMarketValue: 754562, itemProfit: 488667, itemProfitPercent: 184.3, ratio: '77.32%' },
-                { name: '統一-FANG+', symbol: '00757', price: 138.7, shares: 1088, avgCost: 99.87, itemMarketValue: 150877, itemProfit: 42278, itemProfitPercent: 38.9, ratio: '15.45%' },
-                { name: '元大台灣', symbol: '0050', price: 106.95, shares: 492, avgCost: 76.96, itemMarketValue: 52631, itemProfit: 14781, itemProfitPercent: 39.0, ratio: '5.39%' },
-                { name: 'S&P 500', symbol: '00646', price: 76.85, shares: 234, avgCost: 67.84, itemMarketValue: 17978, itemProfit: 2095, itemProfitPercent: 13.2, ratio: '1.84%' }
-            ];
-            renderStocks(976548, 368525, 608023, 165.0, fallbackStocks);
-        }
-
-        function renderStocks(totalMarketValue, totalCost, totalProfit, totalProfitPercent, stocks) {
-            const marketValEl = document.getElementById('stockTotalMarketValue');
-            const profitEl = document.getElementById('stockTotalProfit');
-            const countEl = document.getElementById('stockItemCount');
-            const summaryCard = document.getElementById('stockSummaryCard');
-            const container = document.getElementById('stockListContainer');
-
-            if (!container) return;
-
-            if (marketValEl) marketValEl.textContent = Math.round(totalMarketValue).toLocaleString();
-            if (countEl) countEl.textContent = `${stocks.length} 檔`;
-
-            if (profitEl) {
-                const prefix = totalProfit >= 0 ? '+' : '';
-                profitEl.textContent = `NT$${prefix}${Math.round(totalProfit).toLocaleString()} (${prefix}${totalProfitPercent}%)`;
-                profitEl.className = 'text-sm sm:text-base font-bold font-mono text-white';
-            }
-
-            if (summaryCard) {
-                if (totalProfit > 0) {
-                    summaryCard.className = 'bg-[#C83B2B] text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
-                } else if (totalProfit < 0) {
-                    summaryCard.className = 'bg-[#2D5A3F] text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
-                } else {
-                    summaryCard.className = 'bg-muji-k90 text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
-                }
-            }
-
-            if (stocks.length === 0) {
-                container.innerHTML = `<div class="text-center py-6 text-muji-muted text-xs">目前無持股資料</div>`;
-                return;
-            }
-
-            let html = '';
-            stocks.forEach(stk => {
-                const isPositive = (stk.itemProfit || 0) >= 0;
-                const profitBadgeColor = isPositive ? 'bg-[#C83B2B] text-white' : 'bg-[#2D5A3F] text-white';
-                const profitSign = isPositive ? '+' : '';
-
-                let priceVal = stk.price || stk.currentPrice;
-                if (!priceVal && stk.shares > 0 && stk.itemMarketValue > 0) {
-                    priceVal = stk.itemMarketValue / stk.shares;
-                }
-                let formattedPrice = '--';
-                if (priceVal) {
-                    const num = Number(priceVal);
-                    formattedPrice = '$' + (Number.isInteger(num) ? num.toLocaleString() : num.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 2}));
-                }
-
-                html += `
-                    <div class="p-3.5 bg-muji-pill rounded-2xl border border-transparent hover:border-muji-border smooth-transition space-y-1.5">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold text-muji-text">${escapeHtml(stk.name)}</span>
-                                <span class="text-[10px] font-mono bg-muji-card px-2 py-0.5 rounded-md text-muji-text font-bold border border-muji-border">${formattedPrice}</span>
-                            </div>
-                            <span class="text-xs font-black font-mono text-muji-text">佔比 ${stk.ratio}</span>
-                        </div>
-
-                        <div class="flex items-center justify-between text-[11px] text-muji-muted">
-                            <span>持有股數：${stk.shares.toLocaleString()} 股</span>
-                            <span class="font-bold font-mono px-2 py-0.5 rounded-lg text-[10px] ${profitBadgeColor}">${profitSign}${(stk.itemProfit || 0).toLocaleString()} (${profitSign}${stk.itemProfitPercent}%)</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        // Subscriptions
+        // Subscriptions Fetch & Save (獨立 API 處理)
         async function fetchSubscriptionsFromCloud() {
             if (!subScriptUrl) {
                 loadSubscriptions();
@@ -970,7 +844,7 @@
                 const data = await res.json();
                 if (data.status === 'success' && Array.isArray(data.subscriptions)) {
                     subscriptions = data.subscriptions;
-                    saveSubscriptions();
+                    saveSubscriptionsLocal();
                 } else {
                     loadSubscriptions();
                 }
@@ -986,12 +860,12 @@
                 try { subscriptions = JSON.parse(saved); } catch(e) { subscriptions = [...defaultSubscriptions]; }
             } else {
                 subscriptions = [...defaultSubscriptions];
-                saveSubscriptions();
+                saveSubscriptionsLocal();
             }
             renderSubscriptions();
         }
 
-        function saveSubscriptions() {
+        function saveSubscriptionsLocal() {
             localStorage.setItem('dashboard_subscriptions', JSON.stringify(subscriptions));
         }
 
@@ -1189,13 +1063,13 @@
                 subscriptions.push(savedItem);
             }
 
-            saveSubscriptions();
+            saveSubscriptionsLocal();
             renderSubscriptions();
             closeSubscriptionModal();
 
             if (subScriptUrl && savedItem) {
                 try {
-                    await fetch(`${subScriptUrl}?action=save&target=sub&id=${encodeURIComponent(savedItem.id)}&name=${encodeURIComponent(savedItem.name)}&category=${encodeURIComponent(savedItem.category)}&cycle=${encodeURIComponent(savedItem.cycle)}&amount=${savedItem.amount}&payDay=${encodeURIComponent(savedItem.payDay)}&note=${encodeURIComponent(savedItem.note)}`);
+                    await fetch(`${subScriptUrl}?action=save&id=${encodeURIComponent(savedItem.id)}&name=${encodeURIComponent(savedItem.name)}&category=${encodeURIComponent(savedItem.category)}&cycle=${encodeURIComponent(savedItem.cycle)}&amount=${savedItem.amount}&payDay=${encodeURIComponent(savedItem.payDay)}&note=${encodeURIComponent(savedItem.note)}`);
                 } catch(e) {}
             }
         }
@@ -1224,15 +1098,140 @@
             }
 
             subscriptions = subscriptions.filter(s => s.id !== editId);
-            saveSubscriptions();
+            saveSubscriptionsLocal();
             renderSubscriptions();
             closeSubscriptionModal();
 
             if (subScriptUrl) {
                 try {
-                    await fetch(`${subScriptUrl}?action=delete&target=sub&id=${encodeURIComponent(editId)}`);
+                    await fetch(`${subScriptUrl}?action=delete&id=${encodeURIComponent(editId)}`);
                 } catch(e) {}
             }
+        }
+
+        // Stocks Fetch & Render
+        async function fetchStocksFromCloud() {
+            const syncBadge = document.getElementById('stockSyncStatusBadge');
+            const syncTimeEl = document.getElementById('stockSyncTimeText');
+            
+            if (syncTimeEl) {
+                syncTimeEl.textContent = '同步更新中...';
+            }
+
+            if (!stockScriptUrl) {
+                loadDefaultStocks();
+                return;
+            }
+            try {
+                const res = await fetch(stockScriptUrl);
+                const data = await res.json();
+                if (data.status === 'success' && Array.isArray(data.stocks)) {
+                    renderStocks(data.totalMarketValue || 0, data.totalCost || 0, data.totalProfit || 0, data.totalProfitPercent || 0, data.stocks);
+                    
+                    if (syncBadge) {
+                        syncBadge.classList.remove('hidden');
+                        syncBadge.classList.add('inline-flex');
+                    }
+
+                    const now = new Date();
+                    const timeStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                    if (syncTimeEl) {
+                        syncTimeEl.textContent = timeStr;
+                    }
+                    localStorage.setItem('dashboard_stock_last_sync', timeStr);
+                } else {
+                    loadDefaultStocks();
+                }
+            } catch (err) {
+                loadDefaultStocks();
+                if (syncBadge) {
+                    syncBadge.classList.add('hidden');
+                    syncBadge.classList.remove('inline-flex');
+                }
+                if (syncTimeEl) {
+                    syncTimeEl.textContent = localStorage.getItem('dashboard_stock_last_sync') || '連線失敗，使用離線資料';
+                }
+            }
+        }
+
+        function loadDefaultStocks() {
+            const fallbackStocks = [
+                { name: '台積電', symbol: '2330', price: 2420, shares: 312, avgCost: 852.09, itemMarketValue: 754562, itemProfit: 488667, itemProfitPercent: 184.3, ratio: '77.32%' },
+                { name: '統一-FANG+', symbol: '00757', price: 138.7, shares: 1088, avgCost: 99.87, itemMarketValue: 150877, itemProfit: 42278, itemProfitPercent: 38.9, ratio: '15.45%' },
+                { name: '元大台灣', symbol: '0050', price: 106.95, shares: 492, avgCost: 76.96, itemMarketValue: 52631, itemProfit: 14781, itemProfitPercent: 39.0, ratio: '5.39%' },
+                { name: 'S&P 500', symbol: '00646', price: 76.85, shares: 234, avgCost: 67.84, itemMarketValue: 17978, itemProfit: 2095, itemProfitPercent: 13.2, ratio: '1.84%' }
+            ];
+            renderStocks(976548, 368525, 608023, 165.0, fallbackStocks);
+        }
+
+        function renderStocks(totalMarketValue, totalCost, totalProfit, totalProfitPercent, stocks) {
+            const marketValEl = document.getElementById('stockTotalMarketValue');
+            const profitEl = document.getElementById('stockTotalProfit');
+            const countEl = document.getElementById('stockItemCount');
+            const summaryCard = document.getElementById('stockSummaryCard');
+            const container = document.getElementById('stockListContainer');
+
+            if (!container) return;
+
+            if (marketValEl) marketValEl.textContent = Math.round(totalMarketValue).toLocaleString();
+            if (countEl) countEl.textContent = `${stocks.length} 檔`;
+
+            if (profitEl) {
+                const prefix = totalProfit >= 0 ? '+' : '';
+                profitEl.textContent = `NT$${prefix}${Math.round(totalProfit).toLocaleString()} (${prefix}${totalProfitPercent}%)`;
+                profitEl.className = 'text-sm sm:text-base font-bold font-mono text-white';
+            }
+
+            if (summaryCard) {
+                if (totalProfit > 0) {
+                    summaryCard.className = 'bg-[#C83B2B] text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
+                } else if (totalProfit < 0) {
+                    summaryCard.className = 'bg-[#2D5A3F] text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
+                } else {
+                    summaryCard.className = 'bg-muji-k90 text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
+                }
+            }
+
+            if (stocks.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-muji-muted text-xs">目前無持股資料</div>`;
+                return;
+            }
+
+            let html = '';
+            stocks.forEach(stk => {
+                const isPositive = (stk.itemProfit || 0) >= 0;
+                const profitBadgeColor = isPositive ? 'bg-[#C83B2B] text-white' : 'bg-[#2D5A3F] text-white';
+                const profitSign = isPositive ? '+' : '';
+
+                let priceVal = stk.price || stk.currentPrice;
+                if (!priceVal && stk.shares > 0 && stk.itemMarketValue > 0) {
+                    priceVal = stk.itemMarketValue / stk.shares;
+                }
+                let formattedPrice = '--';
+                if (priceVal) {
+                    const num = Number(priceVal);
+                    formattedPrice = '$' + (Number.isInteger(num) ? num.toLocaleString() : num.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 2}));
+                }
+
+                html += `
+                    <div class="p-3.5 bg-muji-pill rounded-2xl border border-transparent hover:border-muji-border smooth-transition space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-muji-text">${escapeHtml(stk.name)}</span>
+                                <span class="text-[10px] font-mono bg-muji-card px-2 py-0.5 rounded-md text-muji-text font-bold border border-muji-border">${formattedPrice}</span>
+                            </div>
+                            <span class="text-xs font-black font-mono text-muji-text">佔比 ${stk.ratio}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] text-muji-muted">
+                            <span>持有股數：${stk.shares.toLocaleString()} 股</span>
+                            <span class="font-bold font-mono px-2 py-0.5 rounded-lg text-[10px] ${profitBadgeColor}">${profitSign}${(stk.itemProfit || 0).toLocaleString()} (${profitSign}${stk.itemProfitPercent}%)</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         // Lock State
