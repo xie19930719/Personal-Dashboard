@@ -646,13 +646,13 @@
             </div>
             
             <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-muji-text">待辦事項 Google 試算表 API 網址</label>
+                <label class="block text-xs font-bold text-muji-text">待辦事項 Google 試算表 API 網址 (獨立試算表)</label>
                 <input type="url" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
                     class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
             </div>
 
             <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-muji-text">股票試算表 API 網址 (獨立試算表)</label>
+                <label class="block text-xs font-bold text-muji-text">股票試算表 API 網址</label>
                 <input type="url" id="stockScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
                     class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
             </div>
@@ -715,7 +715,7 @@
 
     <script>
         // Global State & Config
-        const FIXED_PASSWORD = '0000';
+        const FIXED_PASSWORD = '7929';
         let todos = [];
         let currentFilter = 'all';
         let categories = ['工作', '生活', '運動', '學習'];
@@ -746,20 +746,21 @@
 
         let coursesList = [...defaultCoursesList];
 
-        // API Endpoint URLs (已自動更新為您的最新部署網址)
+        // API Endpoint URLs (已自動更新待辦事項專屬獨立 API 網址)
         const MOTO_SCRIPT_URL = localStorage.getItem('dashboard_moto_script_url') || 'https://script.google.com/macros/s/AKfycbzONpfqthWmWYT7U0WnLbWo1dp0CmXnohNkgBb4fhAATTpJolIMDKKb_C64gUMppeUm/exec';
-        const LATEST_DEPLOYED_URL = 'https://script.google.com/macros/s/AKfycbyP1eH7O2-9Mm9BFw-2iBMSjPawBJbgn-8-_FTeAjMHQ5C-T5HjoQopAP2opKMpFPdB/exec';
+        const LATEST_COURSE_URL = 'https://script.google.com/macros/s/AKfycbyP1eH7O2-9Mm9BFw-2iBMSjPawBJbgn-8-_FTeAjMHQ5C-T5HjoQopAP2opKMpFPdB/exec';
+        const LATEST_TODO_URL = 'https://script.google.com/macros/s/AKfycbw7YarDCVyNPuF95yQTAatquXso4vCsGF0iPkMzKx18Q2CQYhhdBRvt041_8ZoRJk8/exec';
         
-        let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || LATEST_DEPLOYED_URL;
+        let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || LATEST_TODO_URL;
         let stockScriptUrl = localStorage.getItem('dashboard_stock_script_url') || 'https://script.google.com/macros/s/AKfycbzvKPGYxfKNeTvN5c2h4ouoicUeNLjD7UmphVUIzcsFh4sMtexJ6mgoJsERcwr6CS8k/exec';
-        let calendarScriptUrl = localStorage.getItem('dashboard_calendar_script_url') || LATEST_DEPLOYED_URL;
-        let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || LATEST_DEPLOYED_URL;
+        let calendarScriptUrl = localStorage.getItem('dashboard_calendar_script_url') || LATEST_COURSE_URL;
+        let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || LATEST_COURSE_URL;
 
         window.addEventListener('DOMContentLoaded', () => {
-            // 自動修復並切換為最新的 API 網址
-            if (!localStorage.getItem('dashboard_calendar_script_url') || localStorage.getItem('dashboard_calendar_script_url').includes('AKfycbwugtcCR')) {
-                calendarScriptUrl = LATEST_DEPLOYED_URL;
-                localStorage.setItem('dashboard_calendar_script_url', LATEST_DEPLOYED_URL);
+            // 自動修復並切換待辦事項為最新的獨立 API 網址
+            if (!localStorage.getItem('dashboard_google_script_url') || localStorage.getItem('dashboard_google_script_url').includes('AKfycby94KI5')) {
+                googleScriptUrl = LATEST_TODO_URL;
+                localStorage.setItem('dashboard_google_script_url', LATEST_TODO_URL);
             }
 
             checkLockState();
@@ -1389,7 +1390,7 @@
         }
 
         async function fetchTodosFromCloud() {
-            updateSyncStatusUI('loading', '連線雲端資料中...');
+            updateSyncStatusUI('loading', '連線獨立待辦雲端中...');
             const syncTimeEl = document.getElementById('todoSyncTimeText');
             if (syncTimeEl) syncTimeEl.textContent = '同步更新中...';
 
@@ -1407,7 +1408,7 @@
                     todos = data.todos;
                     saveLocalTodosBackup();
                     renderTodos();
-                    updateSyncStatusUI('success', '已同步 Google 試算表');
+                    updateSyncStatusUI('success', '已同步獨立待辦試算表');
 
                     const now = new Date();
                     const timeStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
@@ -1588,10 +1589,10 @@
             dueDateInput.value = '';
 
             if (googleScriptUrl) {
-                updateSyncStatusUI('loading', '同步至雲端...');
+                updateSyncStatusUI('loading', '同步至獨立雲端...');
                 try {
                     await fetch(`${googleScriptUrl}?action=add&id=${id}&text=${encodeURIComponent(text)}&category=${encodeURIComponent(category)}&dueDate=${dueDate}&completed=false`);
-                    updateSyncStatusUI('success', '已儲存至雲端');
+                    updateSyncStatusUI('success', '已儲存至獨立雲端');
                 } catch (err) {
                     updateSyncStatusUI('warning', '已暫存於本機');
                 }
@@ -1626,7 +1627,7 @@
                 updateSyncStatusUI('loading', '刪除項目中...');
                 try {
                     await fetch(`${googleScriptUrl}?action=delete&id=${id}`);
-                    updateSyncStatusUI('success', '已自雲端移除');
+                    updateSyncStatusUI('success', '已自獨立雲端移除');
                 } catch (err) {
                     updateSyncStatusUI('warning', '已自本機移除');
                 }
@@ -2097,7 +2098,7 @@
 
             const inputUrl = document.getElementById('scriptUrlInput').value.trim();
             const stockUrl = document.getElementById('stockScriptUrlInput').value.trim();
-            const subUrl = document.getElementById('subScriptUrlInput')?.value.trim() || inputUrl;
+            const subUrl = document.getElementById('subScriptUrlInput')?.value.trim() || subScriptUrl;
             const calendarUrl = document.getElementById('calendarScriptUrlInput')?.value.trim() || calendarScriptUrl;
             const motoUrl = document.getElementById('motoScriptUrlInput')?.value.trim() || MOTO_SCRIPT_URL;
 
