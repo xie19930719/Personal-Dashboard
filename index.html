@@ -156,17 +156,19 @@
                         </span>
                     </div>
 
-                    <div class="bg-muji-k90Inner p-5 rounded-2xl border border-white/15 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs text-white/70 font-mono" id="focusTaskDueDate">📅 載入最近課程中...</span>
-                            <span class="w-2 h-2 rounded-full bg-muji-accent"></span>
+                    <div id="focusTaskContainer" class="space-y-3">
+                        <div class="bg-muji-k90Inner p-5 rounded-2xl border border-white/15 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-white/70 font-mono">📅 載入最近課程中...</span>
+                                <span class="w-2 h-2 rounded-full bg-muji-accent"></span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white tracking-tight leading-snug">
+                                載入近期課程資訊...
+                            </h3>
+                            <p class="text-xs text-white/80 leading-relaxed whitespace-pre-line">
+                                即時連動右側課表行程。
+                            </p>
                         </div>
-                        <h3 id="focusTaskTitle" class="text-lg font-bold text-white tracking-tight leading-snug">
-                            載入近期課程資訊...
-                        </h3>
-                        <p id="focusTaskDesc" class="text-xs text-white/80 leading-relaxed whitespace-pre-line">
-                            即時連動右側課表行程。
-                        </p>
                     </div>
 
                     <div class="flex items-center justify-between pt-1 text-xs text-white/80">
@@ -851,15 +853,10 @@
 
         // AI Feature 1: Course Prep Generator
         async function generateCourseAiPrep() {
-            const titleEl = document.getElementById('focusTaskTitle');
-            const descEl = document.getElementById('focusTaskDesc');
-            const dateEl = document.getElementById('focusTaskDueDate');
+            const focusContainer = document.getElementById('focusTaskContainer');
+            const textContent = focusContainer ? focusContainer.innerText.trim() : '';
 
-            const courseTitle = titleEl ? titleEl.textContent.trim() : '';
-            const courseDesc = descEl ? descEl.textContent.trim() : '';
-            const courseDate = dateEl ? dateEl.textContent.trim() : '';
-
-            if (!courseTitle || courseTitle.includes('無排定') || courseTitle.includes('載入')) {
+            if (!textContent || textContent.includes('無排定') || textContent.includes('載入')) {
                 alert('目前沒有即將到來的課程可供 AI 分析！');
                 return;
             }
@@ -869,8 +866,8 @@
             document.getElementById('courseAiLoading').classList.remove('hidden');
             document.getElementById('courseAiContent').classList.add('hidden');
 
-            const systemPrompt = "你是專業且貼心的學習顧問與導師。請根據使用者提供的課程名稱、地點與內容簡介，提供 3-4 點簡明實用的課前準備建議、預習重點或攜帶工具觀念。請使用條列式、語氣親切專業。";
-            const query = `課程名稱：${courseTitle}\n課程時間/地點：${courseDate}\n課程內容：${courseDesc}`;
+            const systemPrompt = "你是專業且貼心的學習顧問與導師。請根據使用者提供的當日課程資訊（可能包含上午及下午多門課程），提供 3-4 點簡明實用的課前準備建議、預習重點或學習策略。請使用條列式、語氣親切專業。";
+            const query = `當日即將上課的課程內容資訊如下：\n${textContent}`;
 
             try {
                 const aiOutput = await callGeminiAPI(query, systemPrompt);
@@ -1015,7 +1012,7 @@
 - 持股數：${document.getElementById('stockItemCount')?.textContent || '未知'}，預估市值：${document.getElementById('stockTotalMarketValue')?.textContent || '0'} 元
 - 月訂閱總額：${document.getElementById('subMonthlyTotal')?.textContent || '0'} 元
 - 機車里程：${document.getElementById('motoCurrentMileage')?.textContent || '--'} km
-- 最近課程：${document.getElementById('focusTaskTitle')?.textContent || '無'} (${document.getElementById('focusTaskDueDate')?.textContent || ''})
+- 最近課程：${document.getElementById('focusTaskContainer')?.innerText.replace(/\n+/g, ' ') || '無'}
             `;
 
             const systemPrompt = `你是一位全能個人生活與工作特助，溫和親切且具無印良品簡約質感的性格。請結合以下 Dashboard 上使用者的即時資料背景答覆發問：\n${contextData}`;
@@ -2340,12 +2337,10 @@
         }
 
         function updateFocusTaskWidget() {
-            const focusTitle = document.getElementById('focusTaskTitle');
-            const focusDesc = document.getElementById('focusTaskDesc');
+            const focusContainer = document.getElementById('focusTaskContainer');
             const focusCategory = document.getElementById('focusTaskCategory');
-            const focusDueDate = document.getElementById('focusTaskDueDate');
 
-            if (!focusTitle) return;
+            if (!focusContainer) return;
 
             const now = new Date();
             const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -2361,42 +2356,68 @@
             });
 
             if (upcomingCourses.length > 0) {
-                const nextCourse = upcomingCourses[0];
-                const courseDateStr = nextCourse.dateStart || nextCourse.date;
-                const [y, m, d] = courseDateStr.split('-');
+                const targetDateStr = upcomingCourses[0].dateStart || upcomingCourses[0].date;
+                const [y, m, d] = targetDateStr.split('-');
                 
                 let dayDiffText = '';
-                if (courseDateStr === todayStr) {
+                if (targetDateStr === todayStr) {
                     dayDiffText = '🔥 今天上課';
                 } else {
-                    const courseDateObj = new Date(courseDateStr);
-                    const todayObj = new Date(todayStr);
+                    const courseDateObj = new Date(targetDateStr.replace(/-/g, '/'));
+                    const todayObj = new Date(todayStr.replace(/-/g, '/'));
                     const diffDays = Math.ceil((courseDateObj - todayObj) / (1000 * 60 * 60 * 24));
                     dayDiffText = `⏳ 還有 ${diffDays} 天`;
                 }
 
-                focusTitle.textContent = nextCourse.title;
-                
-                const loc = (nextCourse.location || nextCourse['上課地點'] || nextCourse['地點'] || '').toString().trim();
-                const teacher = (nextCourse.teacher || nextCourse['授課師資'] || nextCourse['講師'] || '').toString().trim();
+                if (focusCategory) focusCategory.textContent = dayDiffText;
 
-                let descParts = [];
-                if (loc) descParts.push(`📍 ${loc}`);
-                if (teacher) descParts.push(`👨‍🏫 講師：${teacher}`);
-                
-                let descText = descParts.join(' ｜ ');
-                if (nextCourse.desc) descText += (descText ? '\n📖 ' : '📖 ') + nextCourse.desc;
-
-                focusDesc.textContent = descText || '無詳細說明';
-                focusCategory.textContent = dayDiffText;
                 const weekDays = ['日','一','二','三','四','五','六'];
-                const dayOfWeek = weekDays[new Date(courseDateStr.replace(/-/g, '/')).getDay()];
-                focusDueDate.textContent = `📅 ${parseInt(m, 10)}月 ${parseInt(d, 10)}日 (星期${dayOfWeek}) ${nextCourse.time || ''}`;
+                const dayOfWeek = weekDays[new Date(targetDateStr.replace(/-/g, '/')).getDay()];
+                const dateHeaderStr = `${parseInt(m, 10)}月 ${parseInt(d, 10)}日 (星期${dayOfWeek})`;
+
+                // 抓取當天所有課程（包含上午與下午）
+                const sameDayCourses = coursesList.filter(c => (c.dateStart || c.date) === targetDateStr)
+                    .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+
+                let html = '';
+                sameDayCourses.forEach((c) => {
+                    const loc = (c.location || c['上課地點'] || c['地點'] || '').toString().trim();
+                    const teacher = (c.teacher || c['授課師資'] || c['講師'] || '').toString().trim();
+
+                    let descParts = [];
+                    if (loc) descParts.push(`📍 ${loc}`);
+                    if (teacher) descParts.push(`👨‍🏫 講師：${teacher}`);
+                    let metaText = descParts.join(' ｜ ');
+
+                    html += `
+                        <div class="bg-muji-k90Inner p-4 sm:p-5 rounded-2xl border border-white/15 space-y-2">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                                <span class="text-xs text-muji-accent font-mono font-bold">
+                                    📅 ${dateHeaderStr} ⏰ ${escapeHtml(c.time || '')}
+                                </span>
+                                <span class="w-2 h-2 rounded-full bg-muji-accent"></span>
+                            </div>
+                            <h3 class="text-base sm:text-lg font-bold text-white tracking-tight leading-snug">
+                                ${escapeHtml(c.title)}
+                            </h3>
+                            ${metaText ? `<p class="text-xs text-white/90 font-medium">${escapeHtml(metaText)}</p>` : ''}
+                            ${c.desc ? `<p class="text-xs text-white/75 leading-relaxed whitespace-pre-line pt-1.5 border-t border-white/10">${escapeHtml(c.desc)}</p>` : ''}
+                        </div>
+                    `;
+                });
+
+                focusContainer.innerHTML = html;
             } else {
-                focusTitle.textContent = '🎉 近期無排定課程';
-                focusDesc.textContent = '目前無未來的課程行程，好好放鬆一下吧！';
-                focusCategory.textContent = '課表空閒中';
-                focusDueDate.textContent = '📅 無近期行程';
+                if (focusCategory) focusCategory.textContent = '課表空閒中';
+                focusContainer.innerHTML = `
+                    <div class="bg-muji-k90Inner p-5 rounded-2xl border border-white/15 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-white/70 font-mono">📅 無近期行程</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white tracking-tight">🎉 近期無排定課程</h3>
+                        <p class="text-xs text-white/80 leading-relaxed">目前無未來的課程行程，好好放鬆一下吧！</p>
+                    </div>
+                `;
             }
         }
 
