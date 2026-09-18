@@ -30,7 +30,7 @@
                             text: '#2C2B29',        // 深木炭暖灰
                             dark: '#282523',        // 深焦木色
                             accent: '#F5B800',      // 溫潤木金/大地黃
-                            k90: '#222222',         // K90 深灰色 Hero 焦點
+                            k90: '#222222',          // K90 深灰色 Hero 焦點
                             k90Hover: '#000000',    // K90 懸浮純黑
                             k90Soft: '#EAE8E3',     // K90 淺灰背景
                             k90Inner: '#171717',    // K90 內層更深灰卡片
@@ -96,7 +96,11 @@
                     <span id="clockText" class="text-lg font-black font-mono tracking-tight text-muji-text bg-muji-card px-3.5 py-1 rounded-xl border border-muji-border shadow-soft">00:00:00</span>
                     <span id="fullDateText" class="text-xs font-semibold text-muji-muted">2026年 9月 15日 星期二</span>
                     
-                    <button onclick="lockDashboard()" class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl text-xs font-bold bg-muji-card text-muji-text hover:bg-muji-pill border border-muji-border shadow-soft smooth-transition ml-auto md:ml-0" title="鎖定儀表板">
+                    <button onclick="openAiAssistantModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl text-xs font-bold bg-muji-text text-white hover:bg-black border border-muji-text shadow-soft smooth-transition ml-auto md:ml-0" title="AI 個人特助">
+                        <i class="fas fa-sparkles text-xs text-muji-accent"></i> ✨ AI 特助
+                    </button>
+
+                    <button onclick="lockDashboard()" class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl text-xs font-bold bg-muji-card text-muji-text hover:bg-muji-pill border border-muji-border shadow-soft smooth-transition" title="鎖定儀表板">
                         <i class="fas fa-lock text-xs"></i> 鎖定
                     </button>
                 </div>
@@ -170,7 +174,9 @@
                             <i class="far fa-calendar-alt text-muji-accent text-sm"></i>
                             <span>即時連動課表行程</span>
                         </div>
-                        <span class="text-[10px] font-mono bg-white/20 px-2.5 py-1 rounded-lg text-white font-bold">NEXT CLASS</span>
+                        <button onclick="generateCourseAiPrep()" class="inline-flex items-center gap-1.5 text-[11px] font-bold font-mono bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-xl text-white transition-all shadow-sm border border-white/20 cursor-pointer">
+                            <i class="fas fa-wand-magic-sparkles text-muji-accent"></i> ✨ AI 課前準備建議
+                        </button>
                     </div>
                 </div>
             </div>
@@ -450,7 +456,15 @@
                             <span class="text-muji-text">隨手便籤</span>
                             <span class="text-muji-muted font-light text-sm">Notes</span>
                         </h3>
-                        <span id="noteSaveStatus" class="text-[10px] font-medium text-muji-muted bg-muji-pill px-2.5 py-1 rounded-full">已自動儲存</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="aiFormatNote()" class="text-[11px] font-bold text-muji-text bg-muji-pill hover:bg-muji-border px-2.5 py-1 rounded-full smooth-transition flex items-center gap-1">
+                                <i class="fas fa-sparkles text-amber-500 text-[10px]"></i> AI 潤飾
+                            </button>
+                            <button onclick="aiExtractTodosFromNote()" class="text-[11px] font-bold text-muji-text bg-muji-pill hover:bg-muji-border px-2.5 py-1 rounded-full smooth-transition flex items-center gap-1">
+                                <i class="fas fa-list-check text-emerald-600 text-[10px]"></i> AI 轉待辦
+                            </button>
+                            <span id="noteSaveStatus" class="text-[10px] font-medium text-muji-muted bg-muji-pill px-2 py-1 rounded-full">已自動儲存</span>
+                        </div>
                     </div>
                     
                     <textarea id="quickNoteInput" oninput="saveQuickNote()" placeholder="記錄想法、臨時資訊或代辦草稿 (自動儲存於瀏覽器)..."
@@ -458,6 +472,68 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- AI Class Prep Modal -->
+    <div id="courseAiModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border max-w-lg w-full shadow-floating space-y-4 max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-muji-border pb-3">
+                <h3 class="text-base font-extrabold flex items-center gap-2 text-muji-text">
+                    <i class="fas fa-wand-magic-sparkles text-amber-500"></i> ✨ AI 課前準備與重點提煉
+                </h3>
+                <button type="button" onclick="closeCourseAiModal()" class="w-8 h-8 rounded-full bg-muji-pill text-muji-muted hover:text-muji-text flex items-center justify-center">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            
+            <div id="courseAiLoading" class="text-center py-10 space-y-3">
+                <i class="fas fa-circle-notch fa-spin text-2xl text-muji-text"></i>
+                <p class="text-xs font-bold text-muji-muted">Gemini AI 正在分析課程內容並擬定學習策略...</p>
+            </div>
+
+            <div id="courseAiContent" class="hidden space-y-3 text-xs text-muji-text leading-relaxed whitespace-pre-line bg-muji-pill p-5 rounded-2xl border border-muji-border/60">
+                <!-- AI Output populated here -->
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button type="button" onclick="closeCourseAiModal()" class="px-5 py-2.5 bg-muji-k90 hover:bg-black text-white rounded-2xl text-xs font-bold smooth-transition">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant General Drawer Modal -->
+    <div id="aiAssistantModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border max-w-md w-full shadow-floating space-y-4 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between border-b border-muji-border pb-3">
+                <h3 class="text-base font-extrabold flex items-center gap-2 text-muji-text">
+                    <i class="fas fa-sparkles text-amber-500"></i> ✨ AI 個人生活特助
+                </h3>
+                <button type="button" onclick="closeAiAssistantModal()" class="w-8 h-8 rounded-full bg-muji-pill text-muji-muted hover:text-muji-text flex items-center justify-center">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+
+            <div class="space-y-2">
+                <p class="text-xs font-semibold text-muji-muted">您可以選擇快速諮詢主題，或直接向 Gemini 發問：</p>
+                <div class="flex flex-wrap gap-1.5">
+                    <button onclick="askAiPrompt('分析我最近的課程，給我這週的學習與預習規劃')" class="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-muji-pill hover:bg-muji-border text-muji-text smooth-transition">📚 課程預習建議</button>
+                    <button onclick="askAiPrompt('根據我的持股與每月訂閱狀況，提供個人理財與節流短評')" class="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-muji-pill hover:bg-muji-border text-muji-text smooth-transition">📊 財務狀況點評</button>
+                    <button onclick="askAiPrompt('請問RX110機車保養的週期注意事項與節省維護費用的建議')" class="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-muji-pill hover:bg-muji-border text-muji-text smooth-transition">🛠️ 機車維護建議</button>
+                </div>
+            </div>
+
+            <div id="aiAssistantChatBox" class="flex-1 bg-muji-pill p-4 rounded-2xl border border-muji-border/60 overflow-y-auto space-y-3 min-h-[180px] max-h-[300px] text-xs leading-relaxed text-muji-text whitespace-pre-line">
+                <p class="text-muji-muted italic">👋 您好！我是您的個人 Dashboard AI 助理，請點擊上方快捷提示或輸入問題。</p>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2 border-t border-muji-border">
+                <input type="text" id="aiAssistantInput" placeholder="向 Gemini 請教任何問題..." onkeydown="if(event.key==='Enter') sendAiMessage()"
+                    class="flex-1 bg-muji-pill border-0 px-4 py-2.5 rounded-2xl text-xs font-medium text-muji-text focus:outline-none focus:ring-2 focus:ring-muji-text/20">
+                <button onclick="sendAiMessage()" id="aiAssistantSendBtn" class="px-4 py-2.5 bg-muji-k90 hover:bg-black text-white rounded-2xl text-xs font-bold smooth-transition shadow-sm">
+                    發送
+                </button>
+            </div>
         </div>
     </div>
 
@@ -724,6 +800,245 @@
         let isMotoExpanded = false;
         let subDeleteConfirming = false;
 
+        // Gemini API Invocation with Exponential Backoff
+        async function callGeminiAPI(userQuery, systemPrompt = "", isJson = false, responseSchema = null) {
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ role: 'user', parts: [{ text: userQuery }] }]
+            };
+
+            if (systemPrompt) {
+                payload.systemInstruction = { parts: [{ text: systemPrompt }] };
+            }
+
+            if (isJson && responseSchema) {
+                payload.generationConfig = {
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema
+                };
+            }
+
+            let retries = 0;
+            const maxRetries = 3;
+            let delay = 1000;
+
+            while (retries <= maxRetries) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (text) return text;
+                    throw new Error("API 傳回格式異常");
+                } catch (err) {
+                    retries++;
+                    if (retries > maxRetries) throw err;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        // AI Feature 1: Course Prep Generator
+        async function generateCourseAiPrep() {
+            const titleEl = document.getElementById('focusTaskTitle');
+            const descEl = document.getElementById('focusTaskDesc');
+            const dateEl = document.getElementById('focusTaskDueDate');
+
+            const courseTitle = titleEl ? titleEl.textContent.trim() : '';
+            const courseDesc = descEl ? descEl.textContent.trim() : '';
+            const courseDate = dateEl ? dateEl.textContent.trim() : '';
+
+            if (!courseTitle || courseTitle.includes('無排定') || courseTitle.includes('載入')) {
+                alert('目前沒有即將到來的課程可供 AI 分析！');
+                return;
+            }
+
+            document.getElementById('courseAiModal').classList.remove('hidden');
+            document.getElementById('courseAiModal').classList.add('flex');
+            document.getElementById('courseAiLoading').classList.remove('hidden');
+            document.getElementById('courseAiContent').classList.add('hidden');
+
+            const systemPrompt = "你是專業且貼心的學習顧問與導師。請根據使用者提供的課程名稱、地點與內容簡介，提供 3-4 點簡明實用的課前準備建議、預習重點或攜帶工具觀念。請使用條列式、語氣親切專業。";
+            const query = `課程名稱：${courseTitle}\n課程時間/地點：${courseDate}\n課程內容：${courseDesc}`;
+
+            try {
+                const aiOutput = await callGeminiAPI(query, systemPrompt);
+                const contentBox = document.getElementById('courseAiContent');
+                contentBox.textContent = aiOutput;
+                document.getElementById('courseAiLoading').classList.add('hidden');
+                contentBox.classList.remove('hidden');
+            } catch (err) {
+                document.getElementById('courseAiLoading').classList.add('hidden');
+                const contentBox = document.getElementById('courseAiContent');
+                contentBox.textContent = '❌ AI 連線失敗，請稍後再試。';
+                contentBox.classList.remove('hidden');
+            }
+        }
+
+        function closeCourseAiModal() {
+            document.getElementById('courseAiModal').classList.add('hidden');
+            document.getElementById('courseAiModal').classList.remove('flex');
+        }
+
+        // AI Feature 2: Quick Note Formatter & Todo Extractor
+        async function aiFormatNote() {
+            const textarea = document.getElementById('quickNoteInput');
+            const text = textarea ? textarea.value.trim() : '';
+            if (!text) {
+                alert('便籤中沒有文字可供潤飾！');
+                return;
+            }
+
+            const statusEl = document.getElementById('noteSaveStatus');
+            if (statusEl) statusEl.textContent = '✨ AI 整理中...';
+
+            const systemPrompt = "你是一位精練的文字秘書。請將使用者輸入的混亂草稿或隨手筆記，重新整理為排版整齊、分點明確、標題清晰的繁體中文筆記。直接輸出整理後的內容即可。";
+
+            try {
+                const formatted = await callGeminiAPI(text, systemPrompt);
+                textarea.value = formatted;
+                saveQuickNote();
+                if (statusEl) statusEl.textContent = '✨ 整理完成並已儲存';
+            } catch (err) {
+                if (statusEl) statusEl.textContent = '❌ 整理失敗';
+            }
+        }
+
+        async function aiExtractTodosFromNote() {
+            const textarea = document.getElementById('quickNoteInput');
+            const text = textarea ? textarea.value.trim() : '';
+            if (!text) {
+                alert('便籤中沒有文字可萃取待辦事項！');
+                return;
+            }
+
+            const statusEl = document.getElementById('noteSaveStatus');
+            if (statusEl) statusEl.textContent = '🚀 AI 萃取待辦中...';
+
+            const systemPrompt = "分析使用者文字，找出所有的行動項目或待辦事項。將其轉換為 JSON 陣列，每個物件包含 `text` (待辦內容)、`category` (類別，如：工作、生活、學習、運動) 以及 `dueDate` (格式 YYYY-MM-DD，若未提及則為空字串)。";
+
+            const schema = {
+                type: "ARRAY",
+                items: {
+                    type: "OBJECT",
+                    properties: {
+                        "text": { "type": "STRING" },
+                        "category": { "type": "STRING" },
+                        "dueDate": { "type": "STRING" }
+                    },
+                    "propertyOrdering": ["text", "category", "dueDate"]
+                }
+            };
+
+            try {
+                const jsonStr = await callGeminiAPI(text, systemPrompt, true, schema);
+                const extracted = JSON.parse(jsonStr);
+
+                if (Array.isArray(extracted) && extracted.length > 0) {
+                    let addedCount = 0;
+                    extracted.forEach(item => {
+                        if (item.text) {
+                            const newTodo = {
+                                id: 'todo_ai_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                                text: item.text,
+                                category: item.category || '生活',
+                                dueDate: item.dueDate || '',
+                                completed: false
+                            };
+                            todos.unshift(newTodo);
+                            addedCount++;
+                        }
+                    });
+                    saveLocalTodosBackup();
+                    renderTodos();
+                    if (statusEl) statusEl.textContent = `🚀 已新增 ${addedCount} 項待辦！`;
+                } else {
+                    if (statusEl) statusEl.textContent = '⚠️ 未發現待辦項目';
+                }
+            } catch (err) {
+                if (statusEl) statusEl.textContent = '❌ 萃取失敗';
+            }
+        }
+
+        // AI Feature 3: Personal Assistant Chat Modal
+        function openAiAssistantModal() {
+            const modal = document.getElementById('aiAssistantModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAiAssistantModal() {
+            const modal = document.getElementById('aiAssistantModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function askAiPrompt(promptText) {
+            document.getElementById('aiAssistantInput').value = promptText;
+            sendAiMessage();
+        }
+
+        async function sendAiMessage() {
+            const inputEl = document.getElementById('aiAssistantInput');
+            const chatBox = document.getElementById('aiAssistantChatBox');
+            const sendBtn = document.getElementById('aiAssistantSendBtn');
+
+            const query = inputEl.value.trim();
+            if (!query) return;
+
+            // Append User Message
+            const userMsgHtml = `<div class="bg-white p-3 rounded-2xl border border-muji-border text-right font-bold">💬 ${escapeHtml(query)}</div>`;
+            chatBox.innerHTML += userMsgHtml;
+            inputEl.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Loading Indicator
+            const loadingId = 'aiLoading_' + Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}" class="bg-amber-50 p-3 rounded-2xl border border-amber-200 text-amber-800 font-semibold"><i class="fas fa-spinner fa-spin mr-1"></i> Gemini 正在思考中...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            sendBtn.disabled = true;
+
+            const contextData = `
+使用者目前的 Dashboard 數據摘要：
+- 待辦事項總數：${todos.length} 項
+- 持股數：${document.getElementById('stockItemCount')?.textContent || '未知'}，預估市值：${document.getElementById('stockTotalMarketValue')?.textContent || '0'} 元
+- 月訂閱總額：${document.getElementById('subMonthlyTotal')?.textContent || '0'} 元
+- 機車里程：${document.getElementById('motoCurrentMileage')?.textContent || '--'} km
+- 最近課程：${document.getElementById('focusTaskTitle')?.textContent || '無'} (${document.getElementById('focusTaskDueDate')?.textContent || ''})
+            `;
+
+            const systemPrompt = `你是一位全能個人生活與工作特助，溫和親切且具無印良品簡約質感的性格。請結合以下 Dashboard 上使用者的即時資料背景答覆發問：\n${contextData}`;
+
+            try {
+                const answer = await callGeminiAPI(query, systemPrompt);
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) {
+                    loadingEl.className = "bg-white p-3 rounded-2xl border border-muji-border leading-relaxed text-muji-text";
+                    loadingEl.innerHTML = `✨ <strong>Gemini 特助：</strong>\n${escapeHtml(answer)}`;
+                }
+            } catch (err) {
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) {
+                    loadingEl.className = "bg-red-50 p-3 rounded-2xl border border-red-200 text-red-700";
+                    loadingEl.innerHTML = "❌ 連線出現問題，請稍後重試。";
+                }
+            } finally {
+                sendBtn.disabled = false;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
         // Calendar State Initialization
         const todayNow = new Date();
         let calendarYear = todayNow.getFullYear();
@@ -741,24 +1056,24 @@
 
         // Default Courses Data
         const defaultCoursesList = [
-            { id: 'c1', dateStart: '2026-08-15', dateEnd: '2026-08-15', time: '09:00 - 12:00', title: '【AI協作思維與提示詞實務】', teacher: '朱祐君', location: '群亞訓練中心-4樓4B', desc: '1.生成式AI邏輯架構與演算法原理。2.Prompt操作能力建構：提升AI輸出品質' }
+            { id: 'c1', dateStart: '2026-08-15', dateEnd: '2026-08-15', time: '09:00 - 12:00', title: '【AI協作思維與提示詞實務】', teacher: '朱祐君', location: '群亞國際職業訓練中心-3A', desc: '1.生成式AI邏輯架構與演算法原理。2.Prompt操作能力建構：提升AI輸出品質' }
         ];
-
-        let coursesList = [...defaultCoursesList];
-
-        // API Endpoint URLs (已自動替換固定支出獨立 API 網址)
+        // API Endpoint URLs (已更新為您最新的課程月曆 API 網址)
         const MOTO_SCRIPT_URL = localStorage.getItem('dashboard_moto_script_url') || 'https://script.google.com/macros/s/AKfycbzONpfqthWmWYT7U0WnLbWo1dp0CmXnohNkgBb4fhAATTpJolIMDKKb_C64gUMppeUm/exec';
-        const LATEST_COURSE_URL = 'https://script.google.com/macros/s/AKfycbyP1eH7O2-9Mm9BFw-2iBMSjPawBJbgn-8-_FTeAjMHQ5C-T5HjoQopAP2opKMpFPdB/exec';
+        const LATEST_COURSE_URL = 'https://script.google.com/macros/s/AKfycbyIGTIKZTDgQG3Xvvkw1zMT_BcpB7CaIW0w0zgUjcHHOX4ntPAieW76meLT4m0HYxzo/exec';
         const LATEST_TODO_URL = 'https://script.google.com/macros/s/AKfycbw7YarDCVyNPuF95yQTAatquXso4vCsGF0iPkMzKx18Q2CQYhhdBRvt041_8ZoRJk8/exec';
         const LATEST_SUB_URL = 'https://script.google.com/macros/s/AKfycbzqkgikFvwekUVwRiuw0WdqsZQt5cU4ic3i-uR93i4_FufWXZhjoxuBEWgtpctwaHHm/exec';
         
         let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || LATEST_TODO_URL;
         let stockScriptUrl = localStorage.getItem('dashboard_stock_script_url') || 'https://script.google.com/macros/s/AKfycbzvKPGYxfKNeTvN5c2h4ouoicUeNLjD7UmphVUIzcsFh4sMtexJ6mgoJsERcwr6CS8k/exec';
-        let calendarScriptUrl = localStorage.getItem('dashboard_calendar_script_url') || LATEST_COURSE_URL;
+        let calendarScriptUrl = LATEST_COURSE_URL;
         let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || LATEST_SUB_URL;
 
         window.addEventListener('DOMContentLoaded', () => {
-            // 自動更新固定支出的 LocalStorage 快取網址
+            // 自動強制覆寫並更新最新課程網址至 LocalStorage
+            calendarScriptUrl = LATEST_COURSE_URL;
+            localStorage.setItem('dashboard_calendar_script_url', LATEST_COURSE_URL);
+
             if (!localStorage.getItem('dashboard_sub_script_url') || localStorage.getItem('dashboard_sub_script_url').includes('AKfycbyP1eH7O2')) {
                 subScriptUrl = LATEST_SUB_URL;
                 localStorage.setItem('dashboard_sub_script_url', LATEST_SUB_URL);
@@ -794,7 +1109,6 @@
             fetchStocksFromCloud();
         });
 
-        // Compute Subscription Next Date
         function computeNextDate(payDay, cycle = 'monthly') {
             const today = new Date();
             let year = today.getFullYear();
@@ -833,7 +1147,6 @@
             return `${y}-${m}-${d}`;
         }
 
-        // Subscriptions Fetch & Save (獨立 API 處理)
         async function fetchSubscriptionsFromCloud() {
             if (!subScriptUrl) {
                 loadSubscriptions();
@@ -1109,7 +1422,6 @@
             }
         }
 
-        // Stocks Fetch & Render
         async function fetchStocksFromCloud() {
             const syncBadge = document.getElementById('stockSyncStatusBadge');
             const syncTimeEl = document.getElementById('stockSyncTimeText');
@@ -1234,7 +1546,6 @@
             container.innerHTML = html;
         }
 
-        // Lock State
         function checkLockState() {
             const lockModal = document.getElementById('lockScreenModal');
             if (!lockModal) return;
@@ -1275,7 +1586,6 @@
             checkLockState();
         }
 
-        // Weather & Clock
         async function fetchTainanWeather() {
             const tempEl = document.getElementById('widgetApparentTemp');
             const humEl = document.getElementById('widgetHumidity');
@@ -1343,7 +1653,6 @@
             }
         }
 
-        // Quick Note
         function loadQuickNote() {
             const savedNote = localStorage.getItem('dashboard_quick_note') || '';
             const textarea = document.getElementById('quickNoteInput');
@@ -1362,7 +1671,6 @@
             }, 600);
         }
 
-        // Todos
         function renderCategorySelect() {
             const select = document.getElementById('newTodoCategorySelect');
             if (!select) return;
@@ -1633,7 +1941,6 @@
             }
         }
 
-        // Moto Records
         async function fetchMotoRecordsFromCloud() {
             const container = document.getElementById('motoListContainer');
             const syncTimeEl = document.getElementById('motoSyncTimeText');
@@ -1844,7 +2151,7 @@
             }
         }
 
-        // Calendar & Courses (讀取試算表並解析民國年)
+        // Calendar & Courses (讀取試算表並解析民國年與 F 列上課地點)
         async function fetchGoogleCalendar() {
             const focusTitle = document.getElementById('focusTaskTitle');
             if (focusTitle && focusTitle.textContent.includes('載入')) {
@@ -1862,7 +2169,26 @@
                 const data = await res.json();
 
                 if (data.status === 'success' && Array.isArray(data.courses) && data.courses.length > 0) {
-                    coursesList = deduplicateCourses(data.courses);
+                    const normalized = data.courses.map(c => {
+                        if (Array.isArray(c)) {
+                            return {
+                                dateStart: c[0] || '',
+                                time: c[1] || '',
+                                title: c[3] || c[0] || '',
+                                teacher: c[4] || '',
+                                location: (c[5] || '').toString().trim(),
+                                desc: c[3] || ''
+                            };
+                        }
+                        return {
+                            ...c,
+                            title: c.title || c['課程進度／內容'] || c['課程名稱'] || '',
+                            time: c.time || c['授課時間'] || '',
+                            teacher: c.teacher || c['授課師資'] || c['講師'] || '',
+                            location: (c.location || c['上課地點'] || c['地點'] || c.place || c.room || '').toString().trim()
+                        };
+                    });
+                    coursesList = deduplicateCourses(normalized);
                 } else {
                     coursesList = deduplicateCourses([]);
                 }
@@ -1993,16 +2319,18 @@
 
             let html = '';
             dayCourses.forEach(c => {
+                const loc = (c.location || c['上課地點'] || c['地點'] || '').toString().trim();
+                const teacher = (c.teacher || c['授課師資'] || c['講師'] || '').toString().trim();
                 html += `
                     <div class="bg-muji-card p-3.5 rounded-xl border border-muji-border space-y-1.5">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-muji-text">${escapeHtml(c.title)}</span>
-                            <span class="text-[10px] font-mono font-bold bg-muji-pill px-2 py-0.5 rounded-md text-muji-text">${c.time}</span>
+                            <span class="text-[10px] font-mono font-bold bg-muji-pill px-2 py-0.5 rounded-md text-muji-text">${escapeHtml(c.time || '')}</span>
                         </div>
-                        <p class="text-xs text-muji-muted font-normal flex items-center gap-1">
-                            <span>📍</span> ${escapeHtml(c.location || '群亞訓練中心-4樓4B')}
-                            ${c.teacher ? `<span class="ml-2">👨‍🏫 講師：${escapeHtml(c.teacher)}</span>` : ''}
-                        </p>
+                        <div class="flex items-center flex-wrap gap-2 text-xs text-muji-muted font-normal">
+                            ${loc ? `<span>📍 ${escapeHtml(loc)}</span>` : '<span class="text-muji-muted/60">📍 未指定地點</span>'}
+                            ${teacher ? `<span>👨‍🏫 講師：${escapeHtml(teacher)}</span>` : ''}
+                        </div>
                         ${c.desc ? `<p class="text-xs text-muji-muted font-normal leading-relaxed pt-1 border-t border-muji-border/60">${escapeHtml(c.desc)}</p>` : ''}
                     </div>
                 `;
@@ -2049,11 +2377,17 @@
 
                 focusTitle.textContent = nextCourse.title;
                 
-                let descText = `📍 ${nextCourse.location || '群亞訓練中心-4樓4B'}`;
-                if (nextCourse.teacher) descText += ` ｜ 👨‍🏫 講師：${nextCourse.teacher}`;
-                if (nextCourse.desc) descText += `\n📖 ${nextCourse.desc}`;
+                const loc = (nextCourse.location || nextCourse['上課地點'] || nextCourse['地點'] || '').toString().trim();
+                const teacher = (nextCourse.teacher || nextCourse['授課師資'] || nextCourse['講師'] || '').toString().trim();
 
-                focusDesc.textContent = descText;
+                let descParts = [];
+                if (loc) descParts.push(`📍 ${loc}`);
+                if (teacher) descParts.push(`👨‍🏫 講師：${teacher}`);
+                
+                let descText = descParts.join(' ｜ ');
+                if (nextCourse.desc) descText += (descText ? '\n📖 ' : '📖 ') + nextCourse.desc;
+
+                focusDesc.textContent = descText || '無詳細說明';
                 focusCategory.textContent = dayDiffText;
                 const weekDays = ['日','一','二','三','四','五','六'];
                 const dayOfWeek = weekDays[new Date(courseDateStr.replace(/-/g, '/')).getDay()];
@@ -2066,7 +2400,6 @@
             }
         }
 
-        // Settings Modal
         function openSyncSettingsModal() {
             document.getElementById('scriptUrlInput').value = googleScriptUrl;
             document.getElementById('stockScriptUrlInput').value = stockScriptUrl;
