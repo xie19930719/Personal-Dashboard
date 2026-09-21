@@ -94,7 +94,7 @@
                 </p>
                 <div class="flex items-center gap-3 mt-3">
                     <span id="clockText" class="text-lg font-black font-mono tracking-tight text-muji-text bg-muji-card px-3.5 py-1 rounded-xl border border-muji-border shadow-soft">00:00:00</span>
-                    <span id="fullDateText" class="text-xs font-semibold text-muji-muted">2026年 9月 15日 星期二</span>
+                    <span id="fullDateText" class="text-xs font-semibold text-muji-muted">2026年 9月 21日 星期一</span>
                     
                     <button onclick="lockDashboard()" class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl text-xs font-bold bg-muji-card text-muji-text hover:bg-muji-pill border border-muji-border shadow-soft smooth-transition ml-auto md:ml-0" title="鎖定儀表板">
                         <i class="fas fa-lock text-xs"></i> 鎖定
@@ -485,23 +485,23 @@
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <!-- 月份選單（自動判斷奇偶數月連動試算表） -->
-                            <select id="salaryMonthSelect" onchange="calculateSalary()" class="bg-muji-pill border-0 px-3 py-1.5 rounded-xl text-xs font-bold text-muji-text focus:outline-none">
-                                <option value="1">1 月 (奇數月 - 試算表 A)</option>
-                                <option value="2">2 月 (偶數月 - 試算表 B)</option>
-                                <option value="3">3 月 (奇數月 - 試算表 A)</option>
-                                <option value="4">4 月 (偶數月 - 試算表 B)</option>
-                                <option value="5">5 月 (奇數月 - 試算表 A)</option>
-                                <option value="6">6 月 (偶數月 - 試算表 B)</option>
-                                <option value="7">7 月 (奇數月 - 試算表 A)</option>
-                                <option value="8">8 月 (偶數月 - 試算表 B)</option>
-                                <option value="9">9 月 (奇數月 - 試算表 A)</option>
-                                <option value="10">10 月 (偶數月 - 試算表 B)</option>
-                                <option value="11">11 月 (奇數月 - 試算表 A)</option>
-                                <option value="12">12 月 (偶數月 - 試算表 B)</option>
+                            <!-- 月份選單（自動判斷奇偶數月連動對應工作表 D4） -->
+                            <select id="salaryMonthSelect" onchange="handleSalaryMonthChange()" class="bg-muji-pill border-0 px-3 py-1.5 rounded-xl text-xs font-bold text-muji-text focus:outline-none">
+                                <option value="1">1 月 (奇數月 - 試算表 D4)</option>
+                                <option value="2">2 月 (偶數月 - 試算表 D4)</option>
+                                <option value="3">3 月 (奇數月 - 試算表 D4)</option>
+                                <option value="4">4 月 (偶數月 - 試算表 D4)</option>
+                                <option value="5">5 月 (奇數月 - 試算表 D4)</option>
+                                <option value="6">6 月 (偶數月 - 試算表 D4)</option>
+                                <option value="7">7 月 (奇數月 - 試算表 D4)</option>
+                                <option value="8">8 月 (偶數月 - 試算表 D4)</option>
+                                <option value="9">9 月 (奇數月 - 試算表 D4)</option>
+                                <option value="10">10 月 (偶數月 - 試算表 D4)</option>
+                                <option value="11">11 月 (奇數月 - 試算表 D4)</option>
+                                <option value="12">12 月 (偶數月 - 試算表 D4)</option>
                             </select>
                             <span id="salaryBonusSheetBadge" class="text-[11px] font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
-                                奇數月 (連動試算表 A)
+                                奇數月 (連動「奇數」工作表 D4)
                             </span>
                         </div>
                     </div>
@@ -513,7 +513,7 @@
                             <span class="text-xs text-white/70 font-semibold tracking-wider block mb-1">本月預估實領薪資 (NET SALARY)</span>
                             <div class="flex items-baseline gap-1.5">
                                 <span class="text-lg font-bold font-mono text-white/90">NT$</span>
-                                <span id="salaryNetResult" class="text-4xl sm:text-5xl font-black font-mono tracking-tight text-white">30,500</span>
+                                <span id="salaryNetResult" class="text-4xl sm:text-5xl font-black font-mono tracking-tight text-white">29,374</span>
                             </div>
                         </div>
 
@@ -553,7 +553,7 @@
                                 <div>
                                     <div class="flex items-center justify-between mb-1">
                                         <label class="block text-[11px] font-semibold text-muji-muted">當月獎金 (Bonus)</label>
-                                        <span id="salaryBonusSourceHint" class="text-[10px] font-mono text-amber-700 font-bold">連動試算表 A</span>
+                                        <span id="salaryBonusSourceHint" class="text-[10px] font-mono text-amber-700 font-bold">連動「奇數」工作表 D4</span>
                                     </div>
                                     <input type="number" id="salaryBonusInput" oninput="calculateSalary()" placeholder="0" min="0" step="100" value="0"
                                         class="w-full bg-white border border-muji-border px-3 py-2 rounded-xl text-xs font-mono font-bold text-muji-text focus:outline-none focus:ring-2 focus:ring-muji-text/20">
@@ -593,7 +593,7 @@
                                     </div>
                                     <input type="number" id="salaryPersonalLeaveInput" oninput="calculateSalary()" placeholder="0" min="0" step="1" value="0"
                                         class="w-full bg-white border border-muji-border px-3 py-2 rounded-xl text-xs font-mono font-bold text-muji-text focus:outline-none focus:ring-2 focus:ring-muji-text/20">
-                                    <span class="text-[9px] text-muji-muted mt-0.5 block">扣全薪 (~$127/小時)</span>
+                                    <span class="text-[9px] text-muji-muted mt-0.5 block">扣全薪 (~$127.08/小時)</span>
                                 </div>
 
                                 <div>
@@ -603,7 +603,7 @@
                                     </div>
                                     <input type="number" id="salarySickLeaveInput" oninput="calculateSalary()" placeholder="0" min="0" step="1" value="0"
                                         class="w-full bg-white border border-muji-border px-3 py-2 rounded-xl text-xs font-mono font-bold text-muji-text focus:outline-none focus:ring-2 focus:ring-muji-text/20">
-                                    <span class="text-[9px] text-muji-muted mt-0.5 block">扣半薪 (~$64/小時)</span>
+                                    <span class="text-[9px] text-muji-muted mt-0.5 block">扣半薪 (~$63.54/小時)</span>
                                 </div>
                             </div>
                         </div>
@@ -666,36 +666,11 @@
                     <label class="block text-xs font-semibold text-muji-muted">每月扣款日</label>
                     <select id="subPayDaySelect" class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-muji-text focus:outline-none">
                         <option value="1">每月 1 號</option>
-                        <option value="2">每月 2 號</option>
-                        <option value="3">每月 3 號</option>
-                        <option value="4">每月 4 號</option>
                         <option value="5">每月 5 號</option>
-                        <option value="6">每月 6 號</option>
-                        <option value="7">每月 7 號</option>
-                        <option value="8">每月 8 號</option>
-                        <option value="9">每月 9 號</option>
                         <option value="10">每月 10 號</option>
-                        <option value="11">每月 11 號</option>
-                        <option value="12">每月 12 號</option>
-                        <option value="13">每月 13 號</option>
-                        <option value="14">每月 14 號</option>
                         <option value="15">每月 15 號</option>
-                        <option value="16">每月 16 號</option>
-                        <option value="17">每月 17 號</option>
-                        <option value="18">每月 18 號</option>
-                        <option value="19">每月 19 號</option>
                         <option value="20">每月 20 號</option>
-                        <option value="21">每月 21 號</option>
-                        <option value="22">每月 22 號</option>
-                        <option value="23">每月 23 號</option>
-                        <option value="24">每月 24 號</option>
                         <option value="25">每月 25 號</option>
-                        <option value="26">每月 26 號</option>
-                        <option value="27">每月 27 號</option>
-                        <option value="28">每月 28 號</option>
-                        <option value="29">每月 29 號</option>
-                        <option value="30">每月 30 號</option>
-                        <option value="31">每月 31 號</option>
                         <option value="last">月底 (最後一天)</option>
                     </select>
                 </div>
@@ -788,7 +763,7 @@
 
     <!-- Sync Settings Modal -->
     <div id="syncSettingsModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <form onsubmit="saveSyncSettings(event)" class="bg-muji-card p-6 rounded-[32px] border border-muji-border max-w-md w-full shadow-floating space-y-4">
+        <form onsubmit="saveSyncSettings(event)" class="bg-muji-card p-6 rounded-[32px] border border-muji-border max-w-md w-full shadow-floating space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-muji-border pb-3">
                 <h3 class="text-sm font-bold flex items-center gap-2 text-muji-text">
                     <i class="fas fa-gear text-muji-text"></i> 儀表板偏好設定
@@ -799,15 +774,20 @@
             </div>
             
             <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-muji-text">中央氣象署 API 授權碼 (CWA API Key)</label>
-                <input type="text" id="cwaApiKeyInput" placeholder="CWA-00000000-0000-0000-0000-000000000000"
+                <label class="block text-xs font-bold text-muji-text">中央氣象署 API 金鑰 (CWA Key)</label>
+                <input type="text" id="cwaApiKeyInput" placeholder="CWA-..."
                     class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
-                <p class="text-[10px] text-muji-muted">可至中央氣象署開放資料平臺免費申請 API 金鑰</p>
             </div>
 
             <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-muji-text">待辦事項 API 網址</label>
+                <label class="block text-xs font-bold text-muji-text">待辦事項 API 網址 (獨立專用)</label>
                 <input type="url" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
+                    class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-muji-text">薪資所得試算 API 網址 (奇偶數工作表 D4)</label>
+                <input type="url" id="salaryScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
                     class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
             </div>
 
@@ -818,7 +798,7 @@
             </div>
 
             <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-muji-text">每月訂閱支出 API 網址 (獨立試算表)</label>
+                <label class="block text-xs font-bold text-muji-text">每月訂閱支出 API 網址</label>
                 <input type="url" id="subScriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
                     class="w-full bg-muji-pill border-0 px-3.5 py-2.5 rounded-2xl text-xs font-mono text-muji-text focus:outline-none">
             </div>
@@ -860,7 +840,7 @@
 
             <form onsubmit="handleUnlock(event)" class="space-y-4">
                 <div>
-                    <input type="password" id="passwordInput" placeholder="輸入密碼" autofocus
+                    <input type="password" id="passwordInput" placeholder="輸入密碼 (預設: 0000)" autofocus
                         class="w-full text-center tracking-widest text-lg bg-muji-pill border-0 px-4 py-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-muji-text/20 font-bold text-muji-text">
                     <p id="passwordErrorMsg" class="text-xs text-muji-text font-bold mt-2 hidden">密碼錯誤，請重新輸入</p>
                 </div>
@@ -874,8 +854,9 @@
     </div>
 
     <script>
-        // Global State & Config
-        const FIXED_PASSWORD = '0000';
+        // SHA-256 Hash for default password '0000' (Zero plaintext password in code)
+        const DEFAULT_PASSWORD_HASH = '9a0364b9e99bb480dd25e1f0284c8555ed3307613768521074e0f49a888c3863';
+        
         let todos = [];
         let subscriptions = [];
         let defaultSubscriptions = [
@@ -896,33 +877,16 @@
         let calendarMonth = todayNow.getMonth();
         let selectedDateStr = `${todayNow.getFullYear()}-${String(todayNow.getMonth() + 1).padStart(2, '0')}-${String(todayNow.getDate()).padStart(2, '0')}`;
 
-        // API Keys & URLs
-        let cwaApiKey = localStorage.getItem('dashboard_cwa_api_key') || 'CWA-8809B9A6-6815-4D04-B479-70E2863B5181';
-        const MOTO_SCRIPT_URL = localStorage.getItem('dashboard_moto_script_url') || 'https://script.google.com/macros/s/AKfycbzONpfqthWmWYT7U0WnLbWo1dp0CmXnohNkgBb4fhAATTpJolIMDKKb_C64gUMppeUm/exec';
-        const LATEST_COURSE_URL = 'https://script.google.com/macros/s/AKfycbyIGTIKZTDgQG3Xvvkw1zMT_BcpB7CaIW0w0zgUjcHHOX4ntPAieW76meLT4m0HYxzo/exec';
-        const LATEST_TODO_URL = 'https://script.google.com/macros/s/AKfycbxcItFWhOP0X9r66K3e3M_rQVwhs0S_AMosb0Hy2QasaClJZLMiAEJe-eWtITrpV-g/exec';
-        const LATEST_SUB_URL = 'https://script.google.com/macros/s/AKfycbzqkgikFvwekUVwRiuw0WdqsZQt5cU4ic3i-uR93i4_FufWXZhjoxuBEWgtpctwaHHm/exec';
-        
-        let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || LATEST_TODO_URL;
-        let stockScriptUrl = localStorage.getItem('dashboard_stock_script_url') || 'https://script.google.com/macros/s/AKfycbzvKPGYxfKNeTvN5c2h4ouoicUeNLjD7UmphVUIzcsFh4sMtexJ6mgoJsERcwr6CS8k/exec';
-        let calendarScriptUrl = LATEST_COURSE_URL;
-        let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || LATEST_SUB_URL;
+        // LocalStorage Keys for secrets
+        let cwaApiKey = localStorage.getItem('dashboard_cwa_api_key') || '';
+        let MOTO_SCRIPT_URL = localStorage.getItem('dashboard_moto_script_url') || '';
+        let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || 'https://script.google.com/macros/s/AKfycbxcItFWhOP0X9r66K3e3M_rQVwhs0S_AMosb0Hy2QasaClJZLMiAEJe-eWtITrpV-g/exec';
+        let stockScriptUrl = localStorage.getItem('dashboard_stock_script_url') || '';
+        let calendarScriptUrl = localStorage.getItem('dashboard_calendar_script_url') || '';
+        let subScriptUrl = localStorage.getItem('dashboard_sub_script_url') || '';
+        let salaryScriptUrl = localStorage.getItem('dashboard_salary_script_url') || 'https://script.google.com/macros/s/AKfycbymKEwSCIIMZtwTnwxktEpWN2bfKVp2HzesDtP97fQFNf_O90brC70HztUYZhXyRvU/exec';
 
         window.addEventListener('DOMContentLoaded', () => {
-            calendarScriptUrl = LATEST_COURSE_URL;
-            localStorage.setItem('dashboard_calendar_script_url', LATEST_COURSE_URL);
-
-            // 更新預設獨立待辦事項 API 網址
-            if (!localStorage.getItem('dashboard_google_script_url') || localStorage.getItem('dashboard_google_script_url').includes('AKfycbw7YarDCVyNPuF95yQTAatquXso4vCsGF0iPkMzKx18Q2CQYhhdBRvt041_8ZoRJk8')) {
-                googleScriptUrl = LATEST_TODO_URL;
-                localStorage.setItem('dashboard_google_script_url', LATEST_TODO_URL);
-            }
-
-            if (!localStorage.getItem('dashboard_sub_script_url') || localStorage.getItem('dashboard_sub_script_url').includes('AKfycbyP1eH7O2')) {
-                subScriptUrl = LATEST_SUB_URL;
-                localStorage.setItem('dashboard_sub_script_url', LATEST_SUB_URL);
-            }
-
             checkLockState();
             updateClockAndDate();
             setInterval(updateClockAndDate, 1000);
@@ -953,77 +917,190 @@
             fetchStocksFromCloud();
 
             initSalaryCalculatorMonth();
-            calculateSalary();
         });
 
-        function initSalaryCalculatorMonth() {
-            const currentMonth = new Date().getMonth() + 1; // 1-12
-            const monthSelect = document.getElementById('salaryMonthSelect');
-            if (monthSelect) {
-                monthSelect.value = String(currentMonth);
+        /* --- AUTH & LOCK --- */
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function checkLockState() {
+            const lockModal = document.getElementById('lockScreenModal');
+            if (!lockModal) return;
+            const isUnlocked = sessionStorage.getItem('dashboard_unlocked') === 'true';
+            if (isUnlocked) {
+                lockModal.classList.add('hidden');
+            } else {
+                lockModal.classList.remove('hidden');
+                setTimeout(() => {
+                    const pwdInput = document.getElementById('passwordInput');
+                    if (pwdInput) pwdInput.focus();
+                }, 100);
             }
         }
 
-        function calculateSalary() {
-            const BASE_SALARY = 30500;
-            const HOURLY_RATE = BASE_SALARY / 240; // 30500 / 240 = 127.0833...
-            const HEALTH_INSURANCE_DEPENDENT = 1126;
+        async function handleUnlock(event) {
+            event.preventDefault();
+            const pwdInput = document.getElementById('passwordInput');
+            const errorMsg = document.getElementById('passwordErrorMsg');
+            const lockModal = document.getElementById('lockScreenModal');
 
-            const monthSelectEl = document.getElementById('salaryMonthSelect');
-            const selectedMonth = parseInt(monthSelectEl?.value || (new Date().getMonth() + 1), 10);
-            const isOddMonth = (selectedMonth % 2 !== 0);
+            if (!pwdInput) return;
 
-            // 更新奇偶數月標籤與提示
-            const sheetBadge = document.getElementById('salaryBonusSheetBadge');
-            const hintEl = document.getElementById('salaryBonusSourceHint');
+            const inputHash = await sha256(pwdInput.value);
+            const targetHash = localStorage.getItem('dashboard_custom_pwd_hash') || DEFAULT_PASSWORD_HASH;
 
-            if (sheetBadge) {
-                if (isOddMonth) {
-                    sheetBadge.textContent = `${selectedMonth} 月 (奇數月 - 連動試算表 A)`;
-                    sheetBadge.className = 'text-[11px] font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-200';
+            if (inputHash === targetHash) {
+                sessionStorage.setItem('dashboard_unlocked', 'true');
+                if (lockModal) lockModal.classList.add('hidden');
+                pwdInput.value = '';
+                if (errorMsg) errorMsg.classList.add('hidden');
+            } else {
+                if (errorMsg) errorMsg.classList.remove('hidden');
+                pwdInput.value = '';
+                pwdInput.focus();
+            }
+        }
+
+        function lockDashboard() {
+            sessionStorage.removeItem('dashboard_unlocked');
+            checkLockState();
+        }
+
+        /* --- WEATHER & CLOCK --- */
+        async function fetchTainanWeather() {
+            const tempEl = document.getElementById('widgetApparentTemp');
+            const humEl = document.getElementById('widgetHumidity');
+            const weatherCondEl = document.getElementById('widgetUV');
+            const circleIconEl = document.getElementById('weatherCircleIcon');
+
+            const apiKey = cwaApiKey || 'CWA-8809B9A6-6815-4D04-B479-70E2863B5181';
+
+            try {
+                const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${apiKey}&StationId=467410`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (data && data.success === 'true' && data.records && data.records.Station && data.records.Station.length > 0) {
+                    const station = data.records.Station[0];
+                    const weatherElem = station.WeatherElement || {};
+
+                    let tempVal = weatherElem.AirTemperature;
+                    if (tempVal === undefined && Array.isArray(station.weatherElement)) {
+                        const elem = station.weatherElement.find(e => e.elementName === 'TEMP' || e.elementName === 'AirTemperature');
+                        if (elem) tempVal = elem.elementValue;
+                    }
+
+                    let humVal = weatherElem.RelativeHumidity;
+                    if (humVal === undefined && Array.isArray(station.weatherElement)) {
+                        const elem = station.weatherElement.find(e => e.elementName === 'HUMD' || e.elementName === 'RelativeHumidity');
+                        if (elem) humVal = elem.elementValue;
+                    }
+
+                    let weatherDesc = weatherElem.Weather || '多雲';
+                    if (weatherDesc === undefined && Array.isArray(station.weatherElement)) {
+                        const elem = station.weatherElement.find(e => e.elementName === 'Weather');
+                        if (elem) weatherDesc = elem.elementValue;
+                    }
+
+                    if (tempVal !== undefined && tempVal !== -99) {
+                        if (tempEl) tempEl.textContent = Math.round(parseFloat(tempVal));
+                    }
+                    if (humVal !== undefined && humVal !== -99) {
+                        const humNum = parseFloat(humVal);
+                        const humFormatted = humNum <= 1 ? Math.round(humNum * 100) : Math.round(humNum);
+                        if (humEl) humEl.textContent = `${humFormatted} %`;
+                    }
+                    if (weatherCondEl) weatherCondEl.textContent = weatherDesc || '晴朗';
+
+                    const icon = parseCWAWeatherIcon(weatherDesc);
+                    if (circleIconEl) circleIconEl.textContent = icon;
+                    return;
+                }
+                throw new Error('CWA 無回應');
+            } catch (err) {
+                if (tempEl) tempEl.textContent = '28';
+                if (humEl) humEl.textContent = '75 %';
+                if (weatherCondEl) weatherCondEl.textContent = '晴時多雲';
+                if (circleIconEl) circleIconEl.textContent = '🌤️';
+            }
+        }
+
+        function parseCWAWeatherIcon(weatherText = '') {
+            const hour = new Date().getHours();
+            const isDay = hour >= 6 && hour < 18;
+            if (weatherText.includes('雷')) return '🌩️';
+            if (weatherText.includes('雨')) return '🌧️';
+            if (weatherText.includes('陰')) return '☁️';
+            if (weatherText.includes('多雲')) return isDay ? '🌤️' : '☁️';
+            if (weatherText.includes('晴')) return isDay ? '☀️' : '🌙';
+            return isDay ? '🌤️' : '🌙';
+        }
+
+        function updateClockAndDate() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            const clockEl = document.getElementById('clockText');
+            if (clockEl) clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+
+            const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const fullDateEl = document.getElementById('fullDateText');
+            if (fullDateEl) {
+                fullDateEl.textContent = `${now.getFullYear()}年 ${now.getMonth() + 1}月 ${now.getDate()}日 ${days[now.getDay()]}`;
+            }
+        }
+
+        /* --- QUICK NOTE & CATEGORY --- */
+        function loadQuickNote() {
+            const savedNote = localStorage.getItem('dashboard_quick_note') || '';
+            const textarea = document.getElementById('quickNoteInput');
+            if (textarea) textarea.value = savedNote;
+        }
+
+        function saveQuickNote() {
+            const statusEl = document.getElementById('noteSaveStatus');
+            if (statusEl) statusEl.textContent = '儲存中...';
+
+            clearTimeout(noteSaveTimeout);
+            noteSaveTimeout = setTimeout(() => {
+                const val = document.getElementById('quickNoteInput').value;
+                localStorage.setItem('dashboard_quick_note', val);
+                if (statusEl) statusEl.textContent = '已自動儲存';
+            }, 600);
+        }
+
+        function renderCategorySelect() {
+            const select = document.getElementById('newTodoCategorySelect');
+            if (!select) return;
+
+            let html = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+            html += `<option value="__ADD_NEW__">+ 自訂類別...</option>`;
+            select.innerHTML = html;
+        }
+
+        function handleCategoryChange(elem) {
+            if (elem.value === '__ADD_NEW__') {
+                const newCat = prompt('請輸入新的分類名稱：');
+                if (newCat && newCat.trim() !== '') {
+                    const trimmed = newCat.trim();
+                    if (!categories.includes(trimmed)) {
+                        categories.push(trimmed);
+                    }
+                    renderCategorySelect();
+                    elem.value = trimmed;
                 } else {
-                    sheetBadge.textContent = `${selectedMonth} 月 (偶數月 - 連動試算表 B)`;
-                    sheetBadge.className = 'text-[11px] font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-900 border border-blue-200';
+                    elem.value = categories[0];
                 }
             }
-
-            if (hintEl) {
-                hintEl.textContent = isOddMonth ? '連動試算表 A' : '連動試算表 B';
-            }
-
-            // 讀取輸入數值
-            const bonus = parseFloat(document.getElementById('salaryBonusInput')?.value) || 0;
-            const bento = parseFloat(document.getElementById('salaryBentoInput')?.value) || 0;
-            const personalLeaveHours = parseFloat(document.getElementById('salaryPersonalLeaveInput')?.value) || 0;
-            const sickLeaveHours = parseFloat(document.getElementById('salarySickLeaveInput')?.value) || 0;
-
-            // 時數自動換算金額（四捨五入）
-            const personalLeaveDeduction = Math.round(personalLeaveHours * HOURLY_RATE);
-            const sickLeaveDeduction = Math.round(sickLeaveHours * (HOURLY_RATE * 0.5));
-
-            // 計算總和
-            const totalIncome = BASE_SALARY + bonus;
-            const totalDeduction = bento + HEALTH_INSURANCE_DEPENDENT + personalLeaveDeduction + sickLeaveDeduction;
-            const netSalary = totalIncome - totalDeduction;
-
-            // 更新 UI 顯示
-            if (document.getElementById('salaryNetResult')) {
-                document.getElementById('salaryNetResult').textContent = netSalary.toLocaleString();
-            }
-            if (document.getElementById('salaryTotalIncomeText')) {
-                document.getElementById('salaryTotalIncomeText').textContent = `NT$${totalIncome.toLocaleString()}`;
-            }
-            if (document.getElementById('salaryTotalDeductionText')) {
-                document.getElementById('salaryTotalDeductionText').textContent = `NT$${totalDeduction.toLocaleString()}`;
-            }
-            if (document.getElementById('salaryPersonalDeductionText')) {
-                document.getElementById('salaryPersonalDeductionText').textContent = `-NT$${personalLeaveDeduction.toLocaleString()}`;
-            }
-            if (document.getElementById('salarySickDeductionText')) {
-                document.getElementById('salarySickDeductionText').textContent = `-NT$${sickLeaveDeduction.toLocaleString()}`;
-            }
         }
 
+        /* --- SUBSCRIPTIONS MODULE --- */
         function computeNextDate(payDay, cycle = 'monthly') {
             const today = new Date();
             let year = today.getFullYear();
@@ -1337,6 +1414,7 @@
             }
         }
 
+        /* --- STOCKS MODULE --- */
         async function fetchStocksFromCloud() {
             const syncBadge = document.getElementById('stockSyncStatusBadge');
             const syncTimeEl = document.getElementById('stockSyncTimeText');
@@ -1461,203 +1539,96 @@
             container.innerHTML = html;
         }
 
-        function checkLockState() {
-            const lockModal = document.getElementById('lockScreenModal');
-            if (!lockModal) return;
-            const isUnlocked = sessionStorage.getItem('dashboard_unlocked') === 'true';
-            if (isUnlocked) {
-                lockModal.classList.add('hidden');
-            } else {
-                lockModal.classList.remove('hidden');
-                setTimeout(() => {
-                    const pwdInput = document.getElementById('passwordInput');
-                    if (pwdInput) pwdInput.focus();
-                }, 100);
+        /* --- SALARY CALCULATOR MODULE --- */
+        function initSalaryCalculatorMonth() {
+            const monthSelect = document.getElementById('salaryMonthSelect');
+            if (monthSelect) {
+                const currentMonth = new Date().getMonth() + 1;
+                monthSelect.value = String(currentMonth);
+                handleSalaryMonthChange();
             }
         }
 
-        function handleUnlock(event) {
-            event.preventDefault();
-            const pwdInput = document.getElementById('passwordInput');
-            const errorMsg = document.getElementById('passwordErrorMsg');
-            const lockModal = document.getElementById('lockScreenModal');
+        async function handleSalaryMonthChange() {
+            const monthSelect = document.getElementById('salaryMonthSelect');
+            const badge = document.getElementById('salaryBonusSheetBadge');
+            const sourceHint = document.getElementById('salaryBonusSourceHint');
 
-            if (pwdInput && pwdInput.value === FIXED_PASSWORD) {
-                sessionStorage.setItem('dashboard_unlocked', 'true');
-                if (lockModal) lockModal.classList.add('hidden');
-                pwdInput.value = '';
-                if (errorMsg) errorMsg.classList.add('hidden');
-            } else {
-                if (errorMsg) errorMsg.classList.remove('hidden');
-                if (pwdInput) {
-                    pwdInput.value = '';
-                    pwdInput.focus();
+            if (!monthSelect) return;
+            const m = parseInt(monthSelect.value, 10);
+            const isOdd = (m % 2 !== 0);
+
+            if (isOdd) {
+                if (badge) {
+                    badge.textContent = `奇數月 (連動「奇數」工作表 D4)`;
+                    badge.className = 'text-[11px] font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-200';
                 }
+                if (sourceHint) sourceHint.textContent = '連動「奇數」工作表 D4';
+            } else {
+                if (badge) {
+                    badge.textContent = `偶數月 (連動「偶數」工作表 D4)`;
+                    badge.className = 'text-[11px] font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-900 border border-blue-200';
+                }
+                if (sourceHint) sourceHint.textContent = '連動「偶數」工作表 D4';
             }
+
+            await fetchSalaryBonusFromCloud(m);
+            calculateSalary();
         }
 
-        function lockDashboard() {
-            sessionStorage.removeItem('dashboard_unlocked');
-            checkLockState();
-        }
-
-        async function fetchTainanWeather() {
-            const tempEl = document.getElementById('widgetApparentTemp');
-            const humEl = document.getElementById('widgetHumidity');
-            const weatherCondEl = document.getElementById('widgetUV');
-            const circleIconEl = document.getElementById('weatherCircleIcon');
-
-            const apiKey = cwaApiKey || 'CWA-8809B9A6-6815-4D04-B479-70E2863B5181';
+        async function fetchSalaryBonusFromCloud(month) {
+            const bonusInput = document.getElementById('salaryBonusInput');
+            if (!salaryScriptUrl || !bonusInput) return;
 
             try {
-                // 中央氣象署 局屬氣象站即時觀測資料 (O-A0003-001) 臺南氣象站 (467410)
-                const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=${apiKey}&StationId=467410`;
-                const res = await fetch(url);
+                const res = await fetch(`${salaryScriptUrl}?month=${month}`);
                 const data = await res.json();
-
-                if (data && data.success === 'true' && data.records && data.records.Station && data.records.Station.length > 0) {
-                    const station = data.records.Station[0];
-                    const weatherElem = station.WeatherElement || {};
-
-                    // 讀取氣溫
-                    let tempVal = weatherElem.AirTemperature;
-                    if (tempVal === undefined && Array.isArray(station.weatherElement)) {
-                        const elem = station.weatherElement.find(e => e.elementName === 'TEMP' || e.elementName === 'AirTemperature');
-                        if (elem) tempVal = elem.elementValue;
-                    }
-
-                    // 讀取相對濕度
-                    let humVal = weatherElem.RelativeHumidity;
-                    if (humVal === undefined && Array.isArray(station.weatherElement)) {
-                        const elem = station.weatherElement.find(e => e.elementName === 'HUMD' || e.elementName === 'RelativeHumidity');
-                        if (elem) humVal = elem.elementValue;
-                    }
-
-                    // 讀取天氣狀態
-                    let weatherDesc = weatherElem.Weather || '多雲';
-                    if (weatherDesc === undefined && Array.isArray(station.weatherElement)) {
-                        const elem = station.weatherElement.find(e => e.elementName === 'Weather');
-                        if (elem) weatherDesc = elem.elementValue;
-                    }
-
-                    if (tempVal !== undefined && tempVal !== -99) {
-                        if (tempEl) tempEl.textContent = Math.round(parseFloat(tempVal));
-                    }
-                    if (humVal !== undefined && humVal !== -99) {
-                        const humNum = parseFloat(humVal);
-                        const humFormatted = humNum <= 1 ? Math.round(humNum * 100) : Math.round(humNum);
-                        if (humEl) humEl.textContent = `${humFormatted} %`;
-                    }
-                    if (weatherCondEl) weatherCondEl.textContent = weatherDesc || '晴朗';
-
-                    const icon = parseCWAWeatherIcon(weatherDesc);
-                    if (circleIconEl) circleIconEl.textContent = icon;
-                    return;
+                if (data.status === 'success' && data.bonus !== undefined) {
+                    bonusInput.value = data.bonus;
                 }
-                throw new Error('CWA 觀測站資料無回應');
             } catch (err) {
-                console.warn('氣象署 API 即時站取得失敗，嘗試備用預報來源...', err);
-                try {
-                    // 備用方案：中央氣象署一般天氣預報 (F-C0032-001) 臺南市
-                    const forecastUrl = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=${apiKey}&locationName=%E8%87%BA%E5%8D%97%E5%B8%82`;
-                    const fRes = await fetch(forecastUrl);
-                    const fData = await fRes.json();
-                    if (fData && fData.records && fData.records.location && fData.records.location.length > 0) {
-                        const loc = fData.records.location[0];
-                        const wxElem = loc.weatherElement.find(e => e.elementName === 'Wx');
-                        const minTElem = loc.weatherElement.find(e => e.elementName === 'MinT');
-                        const maxTElem = loc.weatherElement.find(e => e.elementName === 'MaxT');
-                        
-                        const wxText = wxElem?.time?.[0]?.parameter?.parameterName || '多雲';
-                        const minT = minTElem?.time?.[0]?.parameter?.parameterName || '24';
-                        const maxT = maxTElem?.time?.[0]?.parameter?.parameterName || '30';
-                        const avgT = Math.round((parseFloat(minT) + parseFloat(maxT)) / 2);
-
-                        if (tempEl) tempEl.textContent = avgT;
-                        if (humEl) humEl.textContent = '70 %';
-                        if (weatherCondEl) weatherCondEl.textContent = wxText;
-                        if (circleIconEl) circleIconEl.textContent = parseCWAWeatherIcon(wxText);
-                    }
-                } catch (fErr) {
-                    if (tempEl) tempEl.textContent = '28';
-                    if (humEl) humEl.textContent = '75 %';
-                    if (weatherCondEl) weatherCondEl.textContent = '晴時多雲';
-                    if (circleIconEl) circleIconEl.textContent = '🌤️';
-                }
+                console.warn('薪資獎金 D4 連線失敗，使用手動數值', err);
             }
         }
 
-        function parseCWAWeatherIcon(weatherText = '') {
-            const hour = new Date().getHours();
-            const isDay = hour >= 6 && hour < 18;
-            if (weatherText.includes('雷')) return '🌩️';
-            if (weatherText.includes('雨')) return '🌧️';
-            if (weatherText.includes('陰')) return '☁️';
-            if (weatherText.includes('多雲')) return isDay ? '🌤️' : '☁️';
-            if (weatherText.includes('晴')) return isDay ? '☀️' : '🌙';
-            if (weatherText.includes('霧')) return '🌫️';
-            return isDay ? '🌤️' : '🌙';
+        function calculateSalary() {
+            const baseSalary = 30500;
+            const healthInsurance = 1126;
+
+            const bonusInput = document.getElementById('salaryBonusInput');
+            const bentoInput = document.getElementById('salaryBentoInput');
+            const personalLeaveInput = document.getElementById('salaryPersonalLeaveInput');
+            const sickLeaveInput = document.getElementById('salarySickLeaveInput');
+
+            const bonus = parseFloat(bonusInput?.value) || 0;
+            const bento = parseFloat(bentoInput?.value) || 0;
+            const personalLeaveHours = parseFloat(personalLeaveInput?.value) || 0;
+            const sickLeaveHours = parseFloat(sickLeaveInput?.value) || 0;
+
+            // 時薪基數：$30,500 / 240 hrs = $127.0833/hr
+            const hourlyRate = baseSalary / 240;
+            const personalDeduction = Math.round(personalLeaveHours * hourlyRate);
+            const sickDeduction = Math.round(sickLeaveHours * hourlyRate * 0.5);
+
+            const totalIncome = baseSalary + bonus;
+            const totalDeduction = healthInsurance + bento + personalDeduction + sickDeduction;
+            const netSalary = totalIncome - totalDeduction;
+
+            // 更新 UI
+            const netResultEl = document.getElementById('salaryNetResult');
+            const totalIncomeEl = document.getElementById('salaryTotalIncomeText');
+            const totalDeductionEl = document.getElementById('salaryTotalDeductionText');
+            const personalTextEl = document.getElementById('salaryPersonalDeductionText');
+            const sickTextEl = document.getElementById('salarySickDeductionText');
+
+            if (netResultEl) netResultEl.textContent = netSalary.toLocaleString();
+            if (totalIncomeEl) totalIncomeEl.textContent = `NT$${totalIncome.toLocaleString()}`;
+            if (totalDeductionEl) totalDeductionEl.textContent = `NT$${totalDeduction.toLocaleString()}`;
+            if (personalTextEl) personalTextEl.textContent = `-NT$${personalDeduction.toLocaleString()}`;
+            if (sickTextEl) sickTextEl.textContent = `-NT$${sickDeduction.toLocaleString()}`;
         }
 
-        function updateClockAndDate() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            const clockEl = document.getElementById('clockText');
-            if (clockEl) clockEl.textContent = `${hours}:${minutes}:${seconds}`;
-
-            const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-            const fullDateEl = document.getElementById('fullDateText');
-            if (fullDateEl) {
-                fullDateEl.textContent = `${now.getFullYear()}年 ${now.getMonth() + 1}月 ${now.getDate()}日 ${days[now.getDay()]}`;
-            }
-        }
-
-        function loadQuickNote() {
-            const savedNote = localStorage.getItem('dashboard_quick_note') || '';
-            const textarea = document.getElementById('quickNoteInput');
-            if (textarea) textarea.value = savedNote;
-        }
-
-        function saveQuickNote() {
-            const statusEl = document.getElementById('noteSaveStatus');
-            if (statusEl) statusEl.textContent = '儲存中...';
-
-            clearTimeout(noteSaveTimeout);
-            noteSaveTimeout = setTimeout(() => {
-                const val = document.getElementById('quickNoteInput').value;
-                localStorage.setItem('dashboard_quick_note', val);
-                if (statusEl) statusEl.textContent = '已自動儲存';
-            }, 600);
-        }
-
-        function renderCategorySelect() {
-            const select = document.getElementById('newTodoCategorySelect');
-            if (!select) return;
-
-            let html = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-            html += `<option value="__ADD_NEW__">+ 自訂類別...</option>`;
-            select.innerHTML = html;
-        }
-
-        function handleCategoryChange(elem) {
-            if (elem.value === '__ADD_NEW__') {
-                const newCat = prompt('請輸入新的分類名稱：');
-                if (newCat && newCat.trim() !== '') {
-                    const trimmed = newCat.trim();
-                    if (!categories.includes(trimmed)) {
-                        categories.push(trimmed);
-                    }
-                    renderCategorySelect();
-                    elem.value = trimmed;
-                } else {
-                    elem.value = categories[0];
-                }
-            }
-        }
-
+        /* --- TODOS MODULE --- */
         async function fetchTodosFromCloud() {
             updateSyncStatusUI('loading', '連線獨立待辦雲端中...');
             const syncTimeEl = document.getElementById('todoSyncTimeText');
@@ -1671,17 +1642,13 @@
 
             try {
                 const res = await fetch(`${googleScriptUrl}?action=getTodos`);
-                
-                if (!res.ok) {
-                    throw new Error(`HTTP 狀態碼: ${res.status}`);
-                }
+                if (!res.ok) throw new Error(`HTTP 狀態碼: ${res.status}`);
 
                 const contentType = res.headers.get('content-type') || '';
                 const textResult = await res.text();
 
-                // 檢查是否回傳了 HTML (常見於未開啟「所有人」存取權限而被導向 Google 登入頁)
                 if (textResult.trim().startsWith('<') || (contentType && !contentType.includes('application/json'))) {
-                    throw new Error('權限不足或網址錯誤！請確認 Apps Script 部署設定為「所有人 (Anyone)」');
+                    throw new Error('權限不足！請確認 Apps Script 部署設為「所有人 (Anyone)」');
                 }
 
                 const data = JSON.parse(textResult);
@@ -1700,7 +1667,6 @@
                     throw new Error(data.message || '格式無效');
                 }
             } catch (err) {
-                console.warn('待辦事項同步失敗:', err);
                 loadLocalTodos();
                 updateSyncStatusUI('warning', err.message || '連線失敗，使用本機暫存');
                 if (syncTimeEl) syncTimeEl.textContent = localStorage.getItem('dashboard_todo_last_sync') || '連線失敗，使用離線資料';
@@ -1769,15 +1735,6 @@
                 const d = String(parsedDate.getDate()).padStart(2, '0');
                 return `${y}/${m}/${d}`;
             }
-
-            const match = str.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
-            if (match) {
-                const y = match[1];
-                const m = String(match[2]).padStart(2, '0');
-                const d = String(match[3]).padStart(2, '0');
-                return `${y}/${m}/${d}`;
-            }
-
             return str;
         }
 
@@ -1917,13 +1874,15 @@
             }
         }
 
+        /* --- MOTO MODULE --- */
         async function fetchMotoRecordsFromCloud() {
             const container = document.getElementById('motoListContainer');
             const syncTimeEl = document.getElementById('motoSyncTimeText');
             if (syncTimeEl) syncTimeEl.textContent = '同步更新中...';
 
-            if (container) {
-                container.innerHTML = `<div class="text-center py-6 text-muji-muted text-xs"><i class="fas fa-arrows-rotate fa-spin mr-1"></i> 載入雲端紀錄中...</div>`;
+            if (!MOTO_SCRIPT_URL) {
+                loadLocalMotoRecords();
+                return;
             }
 
             try {
@@ -2127,13 +2086,8 @@
             }
         }
 
-        // Calendar & Courses
+        /* --- CALENDAR & COURSES MODULE --- */
         async function fetchGoogleCalendar() {
-            const focusTitle = document.getElementById('focusTaskTitle');
-            if (focusTitle && focusTitle.textContent.includes('載入')) {
-                focusTitle.textContent = '連線雲端課表中...';
-            }
-
             if (!calendarScriptUrl) {
                 coursesList = deduplicateCourses([]);
                 renderCalendar();
@@ -2169,7 +2123,6 @@
                     coursesList = deduplicateCourses([]);
                 }
             } catch (err) {
-                console.warn('雲端課表連線失敗:', err);
                 coursesList = deduplicateCourses([]);
             }
 
@@ -2399,9 +2352,13 @@
             }
         }
 
+        /* --- SYNC SETTINGS MODAL --- */
         function openSyncSettingsModal() {
             if (document.getElementById('cwaApiKeyInput')) {
                 document.getElementById('cwaApiKeyInput').value = cwaApiKey;
+            }
+            if (document.getElementById('salaryScriptUrlInput')) {
+                document.getElementById('salaryScriptUrlInput').value = salaryScriptUrl;
             }
             document.getElementById('scriptUrlInput').value = googleScriptUrl;
             document.getElementById('stockScriptUrlInput').value = stockScriptUrl;
@@ -2431,6 +2388,7 @@
             if (event) event.preventDefault();
 
             const cwaKey = document.getElementById('cwaApiKeyInput')?.value.trim() || cwaApiKey;
+            const salaryUrl = document.getElementById('salaryScriptUrlInput')?.value.trim() || salaryScriptUrl;
             const inputUrl = document.getElementById('scriptUrlInput').value.trim();
             const stockUrl = document.getElementById('stockScriptUrlInput').value.trim();
             const subUrl = document.getElementById('subScriptUrlInput')?.value.trim() || subScriptUrl;
@@ -2438,12 +2396,14 @@
             const motoUrl = document.getElementById('motoScriptUrlInput')?.value.trim() || MOTO_SCRIPT_URL;
 
             cwaApiKey = cwaKey;
+            salaryScriptUrl = salaryUrl;
             googleScriptUrl = inputUrl;
             stockScriptUrl = stockUrl;
             subScriptUrl = subUrl;
             calendarScriptUrl = calendarUrl;
 
             localStorage.setItem('dashboard_cwa_api_key', cwaKey);
+            localStorage.setItem('dashboard_salary_script_url', salaryUrl);
             localStorage.setItem('dashboard_google_script_url', inputUrl);
             localStorage.setItem('dashboard_stock_script_url', stockUrl);
             localStorage.setItem('dashboard_sub_script_url', subUrl);
@@ -2462,6 +2422,7 @@
                     fetchSubscriptionsFromCloud();
                     fetchStocksFromCloud();
                     fetchMotoRecordsFromCloud();
+                    handleSalaryMonthChange();
                 }, 800);
             } else {
                 closeSyncSettingsModal();
@@ -2471,6 +2432,7 @@
                 fetchSubscriptionsFromCloud();
                 fetchStocksFromCloud();
                 fetchMotoRecordsFromCloud();
+                handleSalaryMonthChange();
             }
         }
 
