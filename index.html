@@ -470,6 +470,147 @@
                 </div>
             </div>
 
+            <!-- 8. 薪資所得試算 -->
+            <div class="lg:col-span-12">
+                <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-muji-border pb-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-2xl bg-muji-pill flex items-center justify-center text-muji-text text-sm">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-lg tracking-tight text-muji-text">薪資所得試算</h3>
+                                <p class="text-xs text-muji-muted">Salary & Deductions Estimation</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <!-- 月份選單（自動判斷奇偶數月連動試算表） -->
+                            <select id="salaryMonthSelect" onchange="calculateSalary()" class="bg-muji-pill border-0 px-3 py-1.5 rounded-xl text-xs font-bold text-muji-text focus:outline-none">
+                                <option value="1">1 月 (奇數月 - 試算表 A)</option>
+                                <option value="2">2 月 (偶數月 - 試算表 B)</option>
+                                <option value="3">3 月 (奇數月 - 試算表 A)</option>
+                                <option value="4">4 月 (偶數月 - 試算表 B)</option>
+                                <option value="5">5 月 (奇數月 - 試算表 A)</option>
+                                <option value="6">6 月 (偶數月 - 試算表 B)</option>
+                                <option value="7">7 月 (奇數月 - 試算表 A)</option>
+                                <option value="8">8 月 (偶數月 - 試算表 B)</option>
+                                <option value="9">9 月 (奇數月 - 試算表 A)</option>
+                                <option value="10">10 月 (偶數月 - 試算表 B)</option>
+                                <option value="11">11 月 (奇數月 - 試算表 A)</option>
+                                <option value="12">12 月 (偶數月 - 試算表 B)</option>
+                            </select>
+                            <span id="salaryBonusSheetBadge" class="text-[11px] font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
+                                奇數月 (連動試算表 A)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 主要區塊：預估實領薪資 Hero 卡片 -->
+                    <div class="bg-muji-k90 text-white p-6 sm:p-7 rounded-[28px] shadow-floating relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="relative z-10">
+                            <span class="text-xs text-white/70 font-semibold tracking-wider block mb-1">本月預估實領薪資 (NET SALARY)</span>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-lg font-bold font-mono text-white/90">NT$</span>
+                                <span id="salaryNetResult" class="text-4xl sm:text-5xl font-black font-mono tracking-tight text-white">30,500</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 pt-4 md:pt-0 md:border-l border-white/20 md:pl-8 text-xs relative z-10">
+                            <div>
+                                <span class="text-white/70 block font-medium">總應領（含獎金）</span>
+                                <span id="salaryTotalIncomeText" class="text-sm font-bold font-mono text-emerald-400">NT$30,500</span>
+                            </div>
+                            <div>
+                                <span class="text-white/70 block font-medium">總扣款費用</span>
+                                <span id="salaryTotalDeductionText" class="text-sm font-bold font-mono text-rose-300">NT$1,126</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 次要區塊：明細輸入與試算 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        <!-- 收入項目 -->
+                        <div class="bg-muji-pill p-5 rounded-2xl border border-muji-border/60 space-y-4">
+                            <div class="flex items-center justify-between border-b border-muji-border/80 pb-2.5">
+                                <h4 class="text-xs font-bold text-muji-text flex items-center gap-1.5">
+                                    <i class="fas fa-coins text-amber-600"></i> 應領收入項目
+                                </h4>
+                                <span class="text-[10px] font-mono text-muji-muted">INCOME</span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-muji-muted mb-1">固定底薪 (Fixed Base)</label>
+                                    <div class="flex items-center bg-white px-3.5 py-2.5 rounded-xl border border-muji-border text-xs font-bold font-mono text-muji-text">
+                                        <span class="mr-1 text-muji-muted">NT$</span>
+                                        <span>30,500</span>
+                                        <span class="ml-auto text-[10px] font-sans font-normal text-muji-muted bg-muji-pill px-2 py-0.5 rounded-md">固定額</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-[11px] font-semibold text-muji-muted">當月獎金 (Bonus)</label>
+                                        <span id="salaryBonusSourceHint" class="text-[10px] font-mono text-amber-700 font-bold">連動試算表 A</span>
+                                    </div>
+                                    <input type="number" id="salaryBonusInput" oninput="calculateSalary()" placeholder="0" min="0" step="100" value="0"
+                                        class="w-full bg-white border border-muji-border px-3 py-2 rounded-xl text-xs font-mono font-bold text-muji-text focus:outline-none focus:ring-2 focus:ring-muji-text/20">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 扣款項目 -->
+                        <div class="bg-muji-pill p-5 rounded-2xl border border-muji-border/60 space-y-4">
+                            <div class="flex items-center justify-between border-b border-muji-border/80 pb-2.5">
+                                <h4 class="text-xs font-bold text-muji-text flex items-center gap-1.5">
+                                    <i class="fas fa-file-invoice-dollar text-rose-600"></i> 應扣費用項目
+                                </h4>
+                                <span class="text-[10px] font-mono text-muji-muted">DEDUCTION</span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-muji-muted mb-1">健保依附 (Health Insurance)</label>
+                                    <div class="flex items-center bg-white px-3.5 py-2.5 rounded-xl border border-muji-border text-xs font-bold font-mono text-muji-text">
+                                        <span class="mr-1 text-muji-muted">NT$</span>
+                                        <span>1,126</span>
+                                        <span class="ml-auto text-[10px] font-sans font-normal text-muji-muted bg-muji-pill px-2 py-0.5 rounded-md">固定額</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-muji-muted mb-1">便當扣款 (Bento)</label>
+                                    <input type="number" id="salaryBentoInput" oninput="calculateSalary()" placeholder="0" min="0" step="10" value="0"
+                                        class="w-full bg-white border border-muji-border px-3 py-2 rounded-xl text-xs font-mono font-bold text-muji-text focus:outline-none focus:ring-2 focus:ring-muji-text/20">
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-[11px] font-semibold text-muji-muted">事假 (小時)</label>
+                                        <span id="salaryPersonalDeductionText" class="text-[10px] font-mono text-muji-redLight font-bold">-NT$0</span>
+                                    </div>
+                                    <input type="number" id="salaryPersonalLeaveInput" oninput="calculateSalary()" placeholder="0" min="0" step="1" value="0"
+                                        class="w-full bg-white border border-muji-border px-3 py-2 rounded-xl text-xs font-mono font-bold text-muji-text focus:outline-none focus:ring-2 focus:ring-muji-text/20">
+                                    <span class="text-[9px] text-muji-muted mt-0.5 block">扣全薪 (~$127/小時)</span>
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-[11px] font-semibold text-muji-muted">病假 (小時)</label>
+                                        <span id="salarySickDeductionText" class="text-[10px] font-mono text-muji-redLight font-bold">-NT$0</span>
+                                    </div>
+                                    <input type="number" id="salarySickLeaveInput" oninput="calculateSalary()" placeholder="0" min="0" step="1" value="0"
+                                        class="w-full bg-white border border-muji-border px-3 py-2 rounded-xl text-xs font-mono font-bold text-muji-text focus:outline-none focus:ring-2 focus:ring-muji-text/20">
+                                    <span class="text-[9px] text-muji-muted mt-0.5 block">扣半薪 (~$64/小時)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -736,6 +877,11 @@
         // Global State & Config
         const FIXED_PASSWORD = '0000';
         let todos = [];
+        let subscriptions = [];
+        let defaultSubscriptions = [
+            { id: 'sub_1', name: 'Claude Pro', category: '工作生產力', cycle: 'monthly', amount: 640, payDay: '15', note: 'AI 工具' },
+            { id: 'sub_2', name: 'Netflix', category: '影音娛樂', cycle: 'monthly', amount: 390, payDay: '1', note: '家庭方案' }
+        ];
         let currentFilter = 'all';
         let categories = ['工作', '生活', '運動', '學習'];
         let noteSaveTimeout = null;
@@ -754,7 +900,7 @@
         let cwaApiKey = localStorage.getItem('dashboard_cwa_api_key') || 'CWA-8809B9A6-6815-4D04-B479-70E2863B5181';
         const MOTO_SCRIPT_URL = localStorage.getItem('dashboard_moto_script_url') || 'https://script.google.com/macros/s/AKfycbzONpfqthWmWYT7U0WnLbWo1dp0CmXnohNkgBb4fhAATTpJolIMDKKb_C64gUMppeUm/exec';
         const LATEST_COURSE_URL = 'https://script.google.com/macros/s/AKfycbyIGTIKZTDgQG3Xvvkw1zMT_BcpB7CaIW0w0zgUjcHHOX4ntPAieW76meLT4m0HYxzo/exec';
-        const LATEST_TODO_URL = 'https://script.google.com/macros/s/AKfycbw7YarDCVyNPuF95yQTAatquXso4vCsGF0iPkMzKx18Q2CQYhhdBRvt041_8ZoRJk8/exec';
+        const LATEST_TODO_URL = 'https://script.google.com/macros/s/AKfycbxcItFWhOP0X9r66K3e3M_rQVwhs0S_AMosb0Hy2QasaClJZLMiAEJe-eWtITrpV-g/exec';
         const LATEST_SUB_URL = 'https://script.google.com/macros/s/AKfycbzqkgikFvwekUVwRiuw0WdqsZQt5cU4ic3i-uR93i4_FufWXZhjoxuBEWgtpctwaHHm/exec';
         
         let googleScriptUrl = localStorage.getItem('dashboard_google_script_url') || LATEST_TODO_URL;
@@ -765,6 +911,12 @@
         window.addEventListener('DOMContentLoaded', () => {
             calendarScriptUrl = LATEST_COURSE_URL;
             localStorage.setItem('dashboard_calendar_script_url', LATEST_COURSE_URL);
+
+            // 更新預設獨立待辦事項 API 網址
+            if (!localStorage.getItem('dashboard_google_script_url') || localStorage.getItem('dashboard_google_script_url').includes('AKfycbw7YarDCVyNPuF95yQTAatquXso4vCsGF0iPkMzKx18Q2CQYhhdBRvt041_8ZoRJk8')) {
+                googleScriptUrl = LATEST_TODO_URL;
+                localStorage.setItem('dashboard_google_script_url', LATEST_TODO_URL);
+            }
 
             if (!localStorage.getItem('dashboard_sub_script_url') || localStorage.getItem('dashboard_sub_script_url').includes('AKfycbyP1eH7O2')) {
                 subScriptUrl = LATEST_SUB_URL;
@@ -799,7 +951,78 @@
             fetchGoogleCalendar();
             fetchSubscriptionsFromCloud();
             fetchStocksFromCloud();
+
+            initSalaryCalculatorMonth();
+            calculateSalary();
         });
+
+        function initSalaryCalculatorMonth() {
+            const currentMonth = new Date().getMonth() + 1; // 1-12
+            const monthSelect = document.getElementById('salaryMonthSelect');
+            if (monthSelect) {
+                monthSelect.value = String(currentMonth);
+            }
+        }
+
+        function calculateSalary() {
+            const BASE_SALARY = 30500;
+            const HOURLY_RATE = BASE_SALARY / 240; // 30500 / 240 = 127.0833...
+            const HEALTH_INSURANCE_DEPENDENT = 1126;
+
+            const monthSelectEl = document.getElementById('salaryMonthSelect');
+            const selectedMonth = parseInt(monthSelectEl?.value || (new Date().getMonth() + 1), 10);
+            const isOddMonth = (selectedMonth % 2 !== 0);
+
+            // 更新奇偶數月標籤與提示
+            const sheetBadge = document.getElementById('salaryBonusSheetBadge');
+            const hintEl = document.getElementById('salaryBonusSourceHint');
+
+            if (sheetBadge) {
+                if (isOddMonth) {
+                    sheetBadge.textContent = `${selectedMonth} 月 (奇數月 - 連動試算表 A)`;
+                    sheetBadge.className = 'text-[11px] font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-200';
+                } else {
+                    sheetBadge.textContent = `${selectedMonth} 月 (偶數月 - 連動試算表 B)`;
+                    sheetBadge.className = 'text-[11px] font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-900 border border-blue-200';
+                }
+            }
+
+            if (hintEl) {
+                hintEl.textContent = isOddMonth ? '連動試算表 A' : '連動試算表 B';
+            }
+
+            // 讀取輸入數值
+            const bonus = parseFloat(document.getElementById('salaryBonusInput')?.value) || 0;
+            const bento = parseFloat(document.getElementById('salaryBentoInput')?.value) || 0;
+            const personalLeaveHours = parseFloat(document.getElementById('salaryPersonalLeaveInput')?.value) || 0;
+            const sickLeaveHours = parseFloat(document.getElementById('salarySickLeaveInput')?.value) || 0;
+
+            // 時數自動換算金額（四捨五入）
+            const personalLeaveDeduction = Math.round(personalLeaveHours * HOURLY_RATE);
+            const sickLeaveDeduction = Math.round(sickLeaveHours * (HOURLY_RATE * 0.5));
+
+            // 計算總和
+            const totalIncome = BASE_SALARY + bonus;
+            const totalDeduction = bento + HEALTH_INSURANCE_DEPENDENT + personalLeaveDeduction + sickLeaveDeduction;
+            const netSalary = totalIncome - totalDeduction;
+
+            // 更新 UI 顯示
+            if (document.getElementById('salaryNetResult')) {
+                document.getElementById('salaryNetResult').textContent = netSalary.toLocaleString();
+            }
+            if (document.getElementById('salaryTotalIncomeText')) {
+                document.getElementById('salaryTotalIncomeText').textContent = `NT$${totalIncome.toLocaleString()}`;
+            }
+            if (document.getElementById('salaryTotalDeductionText')) {
+                document.getElementById('salaryTotalDeductionText').textContent = `NT$${totalDeduction.toLocaleString()}`;
+            }
+            if (document.getElementById('salaryPersonalDeductionText')) {
+                document.getElementById('salaryPersonalDeductionText').textContent = `-NT$${personalLeaveDeduction.toLocaleString()}`;
+            }
+            if (document.getElementById('salarySickDeductionText')) {
+                document.getElementById('salarySickDeductionText').textContent = `-NT$${sickLeaveDeduction.toLocaleString()}`;
+            }
+        }
 
         function computeNextDate(payDay, cycle = 'monthly') {
             const today = new Date();
@@ -1448,7 +1671,20 @@
 
             try {
                 const res = await fetch(`${googleScriptUrl}?action=getTodos`);
-                const data = await res.json();
+                
+                if (!res.ok) {
+                    throw new Error(`HTTP 狀態碼: ${res.status}`);
+                }
+
+                const contentType = res.headers.get('content-type') || '';
+                const textResult = await res.text();
+
+                // 檢查是否回傳了 HTML (常見於未開啟「所有人」存取權限而被導向 Google 登入頁)
+                if (textResult.trim().startsWith('<') || (contentType && !contentType.includes('application/json'))) {
+                    throw new Error('權限不足或網址錯誤！請確認 Apps Script 部署設定為「所有人 (Anyone)」');
+                }
+
+                const data = JSON.parse(textResult);
 
                 if (data.status === 'success' && Array.isArray(data.todos)) {
                     todos = data.todos;
@@ -1464,8 +1700,9 @@
                     throw new Error(data.message || '格式無效');
                 }
             } catch (err) {
+                console.warn('待辦事項同步失敗:', err);
                 loadLocalTodos();
-                updateSyncStatusUI('warning', '連線失敗，使用本機暫存');
+                updateSyncStatusUI('warning', err.message || '連線失敗，使用本機暫存');
                 if (syncTimeEl) syncTimeEl.textContent = localStorage.getItem('dashboard_todo_last_sync') || '連線失敗，使用離線資料';
             }
         }
@@ -2235,6 +2472,18 @@
                 fetchStocksFromCloud();
                 fetchMotoRecordsFromCloud();
             }
+        }
+
+        function aiFormatNote() {
+            const textarea = document.getElementById('quickNoteInput');
+            if (!textarea || !textarea.value.trim()) return;
+            alert('AI 潤飾功能已觸發（可連接語言模型 API 進行自動整理與格式化）。');
+        }
+
+        function aiExtractTodosFromNote() {
+            const textarea = document.getElementById('quickNoteInput');
+            if (!textarea || !textarea.value.trim()) return;
+            alert('AI 提取待辦功能已觸發（可自動解析便籤中的行動項目並新增至待辦事項）。');
         }
 
         function escapeHtml(str) {
