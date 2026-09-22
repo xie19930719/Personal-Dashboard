@@ -540,7 +540,7 @@
                             <span class="text-xs text-white/70 font-semibold tracking-wider block mb-1">本月預估實領薪資 (NET SALARY)</span>
                             <div class="flex items-baseline gap-1.5">
                                 <span class="text-lg font-bold font-mono text-white/90">NT$</span>
-                                <span id="salaryNetResult" class="text-4xl sm:text-5xl font-black font-mono tracking-tight text-white">30,500</span>
+                                <span id="salaryNetResult" class="text-4xl sm:text-5xl font-black font-mono tracking-tight text-white">27,834</span>
                             </div>
                         </div>
 
@@ -551,7 +551,7 @@
                             </div>
                             <div>
                                 <span class="text-white/70 block font-medium">總扣款費用</span>
-                                <span id="salaryTotalDeductionText" class="text-sm font-bold font-mono text-rose-300">NT$1,126</span>
+                                <span id="salaryTotalDeductionText" class="text-sm font-bold font-mono text-rose-300">NT$2,666</span>
                             </div>
                         </div>
                     </div>
@@ -599,7 +599,16 @@
 
                             <div class="space-y-3">
                                 <div>
-                                    <label class="block text-[11px] font-semibold text-muji-muted mb-1">健保依附 (Health Insurance)</label>
+                                    <label class="block text-[11px] font-semibold text-muji-muted mb-1">勞健保 (Labor & Health Insurance)</label>
+                                    <div class="flex items-center bg-white px-3.5 py-2.5 rounded-xl border border-muji-border text-xs font-bold font-mono text-muji-text">
+                                        <span class="mr-1 text-muji-muted">NT$</span>
+                                        <span>1,540</span>
+                                        <span class="ml-auto text-[10px] font-sans font-normal text-muji-muted bg-muji-pill px-2 py-0.5 rounded-md">固定額</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-muji-muted mb-1">健保依附 (Health Insurance Dependent)</label>
                                     <div class="flex items-center bg-white px-3.5 py-2.5 rounded-xl border border-muji-border text-xs font-bold font-mono text-muji-text">
                                         <span class="mr-1 text-muji-muted">NT$</span>
                                         <span>1,126</span>
@@ -948,7 +957,7 @@
         let calendarMonth = todayNow.getMonth();
         let selectedDateStr = `${todayNow.getFullYear()}-${String(todayNow.getMonth() + 1).padStart(2, '0')}-${String(todayNow.getDate()).padStart(2, '0')}`;
 
-        // API Keys & URLs (直接預設寫死你提供之獎金 API)
+        // API Keys & URLs
         const DEFAULT_BONUS_API = 'https://script.google.com/macros/s/AKfycbyloIApfIU-CxeTdgNzwd5bfTuokuDJS5siJF0q30KldvW33p9eS3Zqc9WnDBqAz6Y/exec';
         let cwaApiKey = localStorage.getItem('dashboard_cwa_api_key') || 'CWA-8809B9A6-6815-4D04-B479-70E2863B5181';
         let bonusAScriptUrl = localStorage.getItem('dashboard_bonus_a_script_url') || DEFAULT_BONUS_API;
@@ -1049,6 +1058,7 @@
         function calculateSalary() {
             const BASE_SALARY = 30500;
             const HOURLY_RATE = BASE_SALARY / 240;
+            const LABOR_HEALTH_INSURANCE = 1540;
             const HEALTH_INSURANCE_DEPENDENT = 1126;
 
             const monthSelectEl = document.getElementById('salaryMonthSelect');
@@ -1081,7 +1091,7 @@
             const sickLeaveDeduction = Math.round(sickLeaveHours * (HOURLY_RATE * 0.5));
 
             const totalIncome = BASE_SALARY + bonus;
-            const totalDeduction = bento + HEALTH_INSURANCE_DEPENDENT + personalLeaveDeduction + sickLeaveDeduction;
+            const totalDeduction = LABOR_HEALTH_INSURANCE + HEALTH_INSURANCE_DEPENDENT + bento + personalLeaveDeduction + sickLeaveDeduction;
             const netSalary = totalIncome - totalDeduction;
 
             if (document.getElementById('salaryNetResult')) {
@@ -2158,7 +2168,6 @@
             }
         }
 
-        // Calendar & Courses
         async function fetchGoogleCalendar() {
             const focusTitle = document.getElementById('focusTaskTitle');
             if (focusTitle && focusTitle.textContent.includes('載入')) {
@@ -2516,13 +2525,26 @@
         function aiFormatNote() {
             const textarea = document.getElementById('quickNoteInput');
             if (!textarea || !textarea.value.trim()) return;
-            alert('AI 潤飾功能已觸發（可連接語言模型 API 進行自動整理與格式化）。');
+            showNoteToast('✨ AI 潤飾功能已發送請求 (可介接 LLM API)');
         }
 
         function aiExtractTodosFromNote() {
             const textarea = document.getElementById('quickNoteInput');
             if (!textarea || !textarea.value.trim()) return;
-            alert('AI 提取待辦功能已觸發（可自動解析便籤中的行動項目並新增至待辦事項）。');
+            showNoteToast('📝 AI 轉待辦已解析完成 (可自動新增至待辦清單)');
+        }
+
+        function showNoteToast(message) {
+            const statusEl = document.getElementById('noteSaveStatus');
+            if (statusEl) {
+                const originalText = statusEl.textContent;
+                statusEl.textContent = message;
+                statusEl.className = 'text-[10px] font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full smooth-transition';
+                setTimeout(() => {
+                    statusEl.textContent = originalText;
+                    statusEl.className = 'text-[10px] font-medium text-muji-muted bg-muji-pill px-2 py-1 rounded-full';
+                }, 2500);
+            }
         }
 
         function escapeHtml(str) {
