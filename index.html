@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Dashboard</title>
+    <title>BLUE LIFE — Personal Dashboard</title>
 
     <!-- Open Graph Meta Tags for Link Preview Protection (LINE & FB) -->
     <meta property="og:title" content="Personal Dashboard" />
@@ -24,21 +24,21 @@
                 extend: {
                     colors: {
                         muji: {
-                            bg: '#F7F5F0',          // 溫暖無印麻質米色底
+                            bg: '#F6FAFD',          // 溫暖無印麻質米色底
                             card: '#FFFFFF',        // 純白質感卡片
-                            cardWarm: '#FAF8F4',    // 溫潤米白次卡片
-                            text: '#2C2B29',        // 深木炭暖灰
-                            dark: '#282523',        // 深焦木色
-                            accent: '#F5B800',      // 溫潤木金/大地黃
-                            k90: '#222222',          // K90 深灰色 Hero 焦點
-                            k90Hover: '#000000',    // K90 懸浮純黑
-                            k90Soft: '#EAE8E3',     // K90 淺灰背景
-                            k90Inner: '#171717',    // K90 內層更深灰卡片
-                            muted: '#8C867E',       // 亞麻灰/次要文字
-                            border: '#E5E0D8',      // 柔和自然邊框
-                            pill: '#EFECE6',        // 溫暖淺沙色標籤/按鈕
-                            redSoft: '#FDF2F0',     // 警示軟紅
-                            redLight: '#C83B2B',    // 警示文字紅
+                            cardWarm: '#EEF7FD',    // 溫潤米白次卡片
+                            text: '#153565',        // 深木炭暖灰
+                            dark: '#113E89',        // 深焦木色
+                            accent: '#2CB3EF',      // 溫潤木金/大地黃
+                            k90: '#103B86',          // K90 深灰色 Hero 焦點
+                            k90Hover: '#08285F',    // K90 懸浮純黑
+                            k90Soft: '#E8F5FD',     // K90 淺灰背景
+                            k90Inner: '#0B2C69',    // K90 內層更深灰卡片
+                            muted: '#667F9C',       // 亞麻灰/次要文字
+                            border: '#D8E8F3',      // 柔和自然邊框
+                            pill: '#EDF6FC',        // 溫暖淺沙色標籤/按鈕
+                            redSoft: '#FFF1F3',     // 警示軟紅
+                            redLight: '#C84C66',    // 警示文字紅
                         }
                     },
                     fontFamily: {
@@ -55,8 +55,8 @@
     <style>
         body {
             font-family: 'Noto Sans TC', 'Inter', sans-serif;
-            background-color: #F7F5F0;
-            color: #2C2B29;
+            background-color: #F6FAFD;
+            color: #153565;
             -webkit-font-smoothing: antialiased;
         }
         .smooth-transition {
@@ -76,12 +76,34 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(140, 134, 126, 0.45);
         }
+
+/* ===================================================
+  BLUE LIFE  /  Japanese editorial dashboard
+  Existing IDs, forms, integrations & markup retained.
+=================================================== */
+:root{--bl-navy:#103B86;--bl-blue:#0096D6;--bl-light:#B8E4F8;--bl-ice:#EDF7FE;--bl-line:#CFE2F1;--bl-text:#173962}
+html{scroll-behavior:smooth;scroll-padding-top:85px}body{background:#f9fcff!important;color:var(--bl-text)!important;padding:0!important;overflow-x:hidden}body>.max-w-7xl{max-width:1440px!important;margin:auto;padding:0 clamp(18px,4vw,66px) 90px}button,a,select,input{ -webkit-tap-highlight-color:transparent }a{text-decoration:none}.bl-anchor{position:relative;top:-90px;width:0;height:0;grid-column:1/-1;display:block;margin:0;padding:0}.smooth-transition{transition:all .23s ease}
+.bl-nav{display:flex;align-items:center;justify-content:space-between;gap:26px;min-height:100px;border-bottom:1px solid #d8eaf6}.bl-brand{display:flex;align-items:center;gap:13px;flex-shrink:0;color:var(--bl-navy)}.bl-brand-symbol{height:51px;width:51px;display:flex;align-items:center;justify-content:center;background:var(--bl-navy);color:white;font-size:26px;font-weight:900;font-style:italic;letter-spacing:-5px;padding-right:5px}.bl-brand-symbol span{color:#3ac2f3}.bl-brand-name{font-family:Inter,sans-serif;font-size:17px;font-weight:900;letter-spacing:.08em;line-height:1.1}.bl-brand-name small{display:block;font-size:8px;letter-spacing:.24em;margin-top:6px;font-weight:700;color:#7794b1}.bl-nav-links{display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:0}.bl-nav-links a{border-left:1px solid #94b5d0;padding:0 clamp(10px,1.5vw,24px);font:800 11px/1.3 Inter,sans-serif;letter-spacing:.07em;color:var(--bl-navy);transition:color .2s}.bl-nav-links a:last-child{border-right:1px solid #94b5d0}.bl-nav-links a:hover{color:var(--bl-blue)}.bl-nav-links small{font:600 9px/2 'Noto Sans TC',sans-serif;display:block;letter-spacing:0}.bl-nav-tag{background:var(--bl-navy);color:white;border-radius:2px;padding:11px 13px;white-space:nowrap;font:800 9px Inter,sans-serif;letter-spacing:.05em}.bl-dot{color:#4dd2fb;padding-left:10px}
+.bl-hero{display:grid;grid-template-columns:minmax(0,1.13fr) minmax(230px,.85fr) minmax(220px,.65fr);align-items:center;min-height:360px;gap:12px;position:relative;padding:26px 0 20px;isolation:isolate}.bl-hero-copy{position:relative;z-index:2}.bl-eyebrow{font:800 10px Inter,sans-serif;letter-spacing:.15em;color:var(--bl-blue);display:flex;align-items:center;gap:10px}.bl-eyebrow-line{height:2px;width:27px;background:var(--bl-blue)}.bl-jp{font-size:12px;font-weight:800;letter-spacing:.2em;color:var(--bl-navy);margin-top:21px}.bl-hero h1{font-family:Inter,'Noto Sans TC',sans-serif;font-weight:900;letter-spacing:-.065em;font-size:clamp(39px,4.5vw,75px);line-height:1.18;color:var(--bl-navy);margin:8px 0 17px}.bl-hero h1 span:last-child{color:var(--bl-blue);white-space:nowrap;font-size:.8em;letter-spacing:-.055em}.bl-hero-comma{color:var(--bl-blue)}.bl-hero-desc{font-size:12px;color:#527495;font-weight:600}.bl-hero-clock{margin-top:24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;color:var(--bl-navy);font-size:11px;font-weight:700}.bl-hero-clock #clockText{font:900 19px Inter,monospace;letter-spacing:.02em}.bl-clock-rule{background:#bfd6e9;height:16px;width:1px}.bl-hero-clock button{width:26px;height:26px;background:var(--bl-ice);border-radius:50%;color:var(--bl-navy)}
+.bl-hero-art{position:relative;align-self:stretch;min-height:305px}.bl-bubble{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center}.bl-bubble-a{width:235px;height:235px;background:var(--bl-blue);right:20px;top:14px;color:white;transform:rotate(-10deg)}.bl-vertical{writing-mode:vertical-rl;font-size:18px;font-weight:900;letter-spacing:.26em}.bl-bubble-b{width:115px;height:115px;left:-22px;bottom:7px;background:var(--bl-light);color:var(--bl-navy);font-weight:900;font-size:16px;text-align:center;line-height:1.7}.bl-bubble-c{width:63px;height:63px;background:var(--bl-navy);right:1px;bottom:16px}.bl-person{position:absolute;z-index:2;width:140px;left:4%;top:12%;filter:drop-shadow(0 4px 0 rgba(255,255,255,.15))}.bl-art-label{position:absolute;z-index:3;background:white;border:2px solid var(--bl-navy);border-radius:5px;padding:10px 13px;right:12%;bottom:26px;color:var(--bl-navy);font:900 13px Inter,sans-serif;transform:rotate(4deg)}.bl-art-label small{font-size:8px;letter-spacing:.09em;color:var(--bl-blue)}
+.bl-weather{width:100%;min-height:215px;border-radius:50% 50% 45% 45%;background:var(--bl-navy);color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 12px;text-align:center;position:relative}.bl-weather:after{content:'';position:absolute;right:20px;bottom:-9px;border-left:28px solid transparent;border-top:34px solid var(--bl-navy);transform:rotate(-20deg)}.bl-weather-label{font:900 11px Inter,sans-serif;letter-spacing:.1em}.bl-weather-label small{display:block;font:400 9px 'Noto Sans TC',sans-serif;opacity:.75;letter-spacing:0;margin-top:5px}.bl-live-dot{display:inline-block;background:#68d9fa;border-radius:50%;width:6px;height:6px;vertical-align:middle;margin-right:5px}.bl-weather-main{display:flex;align-items:center;justify-content:center;gap:5px;margin:10px 0 6px}.bl-weather-main #weatherCircleIcon{font-size:26px;margin-right:6px}.bl-weather-main strong{font:900 46px Inter,sans-serif;letter-spacing:-.06em}.bl-weather-unit{font:700 15px Inter,sans-serif;align-self:flex-start;margin-top:9px}.bl-weather-meta{display:flex;gap:11px;justify-content:center;flex-wrap:wrap;font-size:9px;opacity:.85}.bl-weather-meta b{display:block;font:800 12px Inter,'Noto Sans TC',sans-serif;color:#fff;margin-top:3px}
+.bl-section-intro{border-top:2px solid var(--bl-navy);display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 0;margin-bottom:6px;color:var(--bl-navy);font:900 13px Inter,sans-serif;letter-spacing:.1em}.bl-section-intro small{font:600 10px 'Noto Sans TC',sans-serif;letter-spacing:0;margin-left:9px}.bl-section-intro>span:last-child{font-size:9px;color:var(--bl-blue)}
+/* grid and card visual treatment */
+.bl-card-index{display:flex;justify-content:space-between;align-items:center;gap:9px;margin:1px 3px 13px;color:var(--bl-navy);font:900 10px Inter,sans-serif;letter-spacing:.17em}.bl-card-index small{color:var(--bl-blue);font:700 11px 'Noto Sans TC',sans-serif;letter-spacing:.05em}.lg\:col-span-6,.lg\:col-span-12{min-width:0}.lg\:col-span-6>div:not(.bl-card-index),.lg\:col-span-12>div:not(.bl-card-index){position:relative}.bg-muji-card{border-color:var(--bl-line)!important}.rounded-\[32px\]{border-radius:26px!important}.rounded-\[28px\]{border-radius:23px!important}.bg-muji-card.p-7{box-shadow:0 9px 32px rgba(16,59,134,.035)!important}.bg-muji-card.p-7:before{content:'';position:absolute;top:0;right:32px;width:28px;height:5px;background:var(--bl-blue);border-radius:0 0 6px 6px}.bg-muji-k90{background-color:var(--bl-navy)!important}.bg-muji-pill{background-color:#edf6fc!important}.text-muji-text{color:var(--bl-navy)!important}.text-muji-muted{color:#66819c!important}.border-muji-border{border-color:var(--bl-line)!important}.bg-muji-k90 .text-muji-text,.bg-muji-k90 button.text-muji-text{color:white!important}.bg-muji-k90 .bg-muji-k90Inner{background:#092967!important}.bg-muji-k90 .text-muji-accent{color:#54d5fb!important}.bg-muji-k90 .bg-muji-accent{background:#54d5fb!important}.bg-muji-k90 .text-white{color:white!important}.bg-muji-card h2,.bg-muji-card h3{letter-spacing:-.025em}.bg-muji-card button.bg-muji-k90,.bg-muji-card button.bg-muji-text{background:var(--bl-navy)!important;color:white!important}.bg-muji-card button.bg-muji-k90:hover,.bg-muji-card button.bg-muji-text:hover{background:var(--bl-blue)!important}input:focus,textarea:focus,select:focus{outline-color:var(--bl-blue)!important}
+/* graphic emphasis on Course Focus and salary */
+#focusTaskContainer:before{content:'●';position:absolute;top:66px;right:17px;font-size:33px;color:#56cefa;opacity:.38;pointer-events:none}.lg\:col-span-6:first-of-type .bg-muji-k90{background:var(--bl-navy)}#stockSummaryCard:after{content:'';height:115px;width:115px;position:absolute;right:-32px;top:-45px;background:var(--bl-blue);border-radius:50%;opacity:.2}.bg-muji-card .bg-muji-k90{box-shadow:0 7px 18px rgba(16,59,134,.12)}
+/* Mobile: no horizontal overflow, easy touch targets, calendar remains 7 columns */
+@media(max-width:1150px){.bl-nav-tag{display:none}.bl-hero{grid-template-columns:minmax(0,1.3fr) minmax(200px,.9fr)}.bl-weather{grid-column:1/-1;border-radius:24px;min-height:108px;flex-direction:row;justify-content:space-between;padding:20px 26px;gap:15px;text-align:left}.bl-weather:after{display:none}.bl-weather-main{margin:0}.bl-weather-main strong{font-size:32px}.bl-weather-meta{margin-left:auto}.bl-hero h1{font-size:clamp(40px,5.8vw,63px)}}
+@media(max-width:760px){body>.max-w-7xl{padding:0 17px 60px}.bl-nav{min-height:76px;gap:8px}.bl-brand-symbol{width:42px;height:42px;font-size:23px}.bl-brand-name{font-size:15px}.bl-brand-name small{font-size:7px}.bl-nav-links{display:none}.bl-hero{grid-template-columns:minmax(0,1fr) 110px;gap:0;padding:31px 0 14px;min-height:auto}.bl-hero-copy{z-index:3}.bl-eyebrow{font-size:8px}.bl-jp{margin-top:18px}.bl-hero h1{font-size:clamp(35px,8vw,52px);margin:10px 0}.bl-hero h1 span:last-child{font-size:.72em}.bl-hero-desc{font-size:11px;max-width:270px}.bl-hero-clock{gap:8px;margin-top:19px}.bl-hero-clock #clockText{font-size:15px}.bl-hero-clock #fullDateText{font-size:10px}.bl-hero-art{min-height:230px;margin-left:-45px;opacity:.96;overflow:visible}.bl-bubble-a{width:128px;height:128px;top:8px;right:0}.bl-vertical{font-size:12px}.bl-bubble-b{width:75px;height:75px;bottom:35px;left:1px;font-size:10px}.bl-bubble-c{width:36px;height:36px;bottom:13px;right:7px}.bl-person{width:89px;left:0;top:13%}.bl-art-label{display:none}.bl-weather{grid-column:1/-1;min-height:95px;border-radius:18px;padding:17px 19px;margin-top:22px}.bl-weather-label{font-size:9px}.bl-weather-label small{font-size:8px}.bl-weather-main #weatherCircleIcon{font-size:22px}.bl-weather-main strong{font-size:31px}.bl-weather-unit{font-size:12px}.bl-weather-meta{display:none}.bl-section-intro{margin-top:11px}.bl-section-intro>span:last-child{font-size:8px}.bl-card-index{margin-top:7px}.bg-muji-card.p-7,.bg-muji-k90.p-7{padding:20px!important}.rounded-\[32px\]{border-radius:22px!important}.bl-anchor{display:none}#calendarGrid>div{min-width:0}#fullDateText{white-space:normal}}
+@media(max-width:420px){.bl-hero{grid-template-columns:minmax(0,1fr) 82px}.bl-hero h1{font-size:35px}.bl-hero-art{margin-left:-42px}.bl-bubble-a{width:102px;height:102px;right:-3px}.bl-person{width:77px}.bl-bubble-b{width:63px;height:63px;bottom:40px}.bl-bubble-c{width:30px;height:30px}.bl-hero-clock{gap:7px}.bl-weather{padding:14px 15px}.bl-weather-main strong{font-size:27px}.bl-weather-label small{max-width:125px}.bl-section-intro small{display:block;margin:5px 0 0}.bl-section-intro>span:last-child{max-width:105px;text-align:right}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
     </style>
 </head>
 <body class="min-h-screen p-4 sm:p-6 lg:p-10">
 
     <!-- 密碼驗證遮罩 Overlay -->
-    <div id="authOverlay" class="fixed inset-0 bg-[#F7F5F0] z-[100] flex items-center justify-center p-4">
+    <div id="authOverlay" class="fixed inset-0 bg-[#F6FAFD] z-[100] flex items-center justify-center p-4">
         <div class="bg-muji-card border border-muji-border p-8 rounded-[32px] shadow-floating max-w-sm w-full text-center space-y-6">
             <div class="w-16 h-16 bg-muji-pill rounded-full flex items-center justify-center mx-auto text-2xl text-muji-text">
                 <i class="fas fa-lock"></i>
@@ -110,62 +132,31 @@
 
     <div class="max-w-7xl mx-auto space-y-6">
         
-        <!-- Header Row -->
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 py-2">
-            <div>
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="text-3xl font-black tracking-tight text-muji-text">こんにちは</span>
-                    <span class="text-2xl animate-bounce">👋</span>
-                </div>
-                <p id="subGreetingText" class="text-xs sm:text-sm font-medium text-muji-muted">
-                    今天也是充實美好的一天，保持節奏加油！ ✨
-                </p>
-                <div class="flex items-center gap-3 mt-3">
-                    <span id="clockText" class="text-lg font-black font-mono tracking-tight text-muji-text bg-muji-card px-3.5 py-1 rounded-xl border border-muji-border shadow-soft">00:00:00</span>
-                    <span id="fullDateText" class="text-xs font-semibold text-muji-muted">2026年 9月 15日 星期二</span>
-                    <button onclick="lockDashboard()" class="text-xs text-muji-muted hover:text-muji-text bg-muji-card p-1.5 rounded-xl border border-muji-border shadow-soft smooth-transition ml-1" title="手動鎖定頁面">
-                        <i class="fas fa-lock"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Header Weather & Info Widget -->
-            <div class="bg-muji-pill border border-muji-border p-6 rounded-[28px] shadow-soft w-full md:w-80 h-44 flex flex-col justify-between relative overflow-hidden">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-xs font-bold tracking-wider text-muji-muted font-mono uppercase">CWA 氣象署</span>
-                        <span class="text-[10px] font-bold bg-muji-card px-2 py-0.5 rounded-full border border-muji-border text-muji-text">台南站 467410</span>
-                    </div>
-                    <div id="weatherCircleIcon" class="w-13 h-13 rounded-full bg-[#EAD8AD] flex items-center justify-center text-2xl shadow-sm text-muji-text flex-shrink-0">
-                        ☀️
-                    </div>
-                </div>
-
-                <div class="flex items-end justify-between">
-                    <div class="flex gap-4 pb-1">
-                        <div>
-                            <span class="text-[11px] font-medium text-muji-muted block">相對濕度</span>
-                            <span id="widgetHumidity" class="text-xs font-extrabold font-mono text-muji-text">-- %</span>
-                        </div>
-                        <div>
-                            <span class="text-[11px] font-medium text-muji-muted block">天氣狀況</span>
-                            <span id="widgetUV" class="text-xs font-extrabold font-mono text-muji-text">--</span>
-                        </div>
-                    </div>
-
-                    <div class="flex items-start">
-                        <span id="widgetApparentTemp" class="text-5xl font-black font-mono tracking-tighter text-muji-text leading-none">--</span>
-                        <span class="text-base font-bold text-muji-text font-mono ml-0.5 leading-none">°C</span>
-                    </div>
-                </div>
-            </div>
+        <!-- BLUE LIFE: Editorial header / RWD -->
+        <nav class="bl-nav" aria-label="主要區塊">
+          <a class="bl-brand" href="#top" aria-label="Blue Life 返回頂部"><span class="bl-brand-symbol">b<span>·</span>l</span><span class="bl-brand-name">BLUE LIFE<small>PERSONAL LIFE OS</small></span></a>
+          <div class="bl-nav-links"><a href="#section-course">SCHEDULE <small>課程計畫</small></a><a href="#section-finance">FINANCE <small>投資理財</small></a><a href="#section-life">DAILY <small>生活紀錄</small></a><a href="#section-salary">SALARY <small>薪資試算</small></a></div>
+          <span class="bl-nav-tag">MY LITTLE SPACE <span class="bl-dot">●</span></span>
+        </nav>
+        <header class="bl-hero" id="top">
+          <div class="bl-hero-copy">
+            <div class="bl-eyebrow"><span class="bl-eyebrow-line"></span> A LITTLE MORE ORGANIZED, EVERY DAY.</div>
+            <p class="bl-jp">わたしの、暮らし。</p>
+            <h1>こんにちは<span class="bl-hero-comma">、</span><br><span>HELLO, MY DAY.</span></h1>
+            <p id="subGreetingText" class="bl-hero-desc">今天也是充實美好的一天，保持節奏加油！ ✨</p>
+            <div class="bl-hero-clock"><span id="clockText">00:00:00</span><span class="bl-clock-rule"></span><span id="fullDateText">日期載入中</span><button onclick="lockDashboard()" title="鎖定頁面" aria-label="鎖定頁面"><i class="fas fa-lock"></i></button></div>
+          </div>
+          <div class="bl-hero-art" aria-hidden="true"><div class="bl-bubble bl-bubble-a"><span class="bl-vertical">いい日になりますように</span></div><div class="bl-bubble bl-bubble-b"><span>くらし<br>を楽しむ</span></div><div class="bl-bubble bl-bubble-c"></div><svg class="bl-person" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="#103B86" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M49 189c-3-37 16-56 42-56 31 0 51 19 51 56M65 139l25 25 24-25M90 164v26M59 51C63 24 116 17 128 57l-3 33c-3 22-18 39-37 39-23 0-36-22-37-44l-2-27z" fill="white"/><path d="M54 57c13 1 33-8 39-22 4 15 19 20 35 19M68 72h9m27 0h9m-32 13c3 3 8 3 11 0m-11 19c9 6 20 6 28 0M48 77c-13-2-12 16 1 20m78-20c13-2 12 16-1 20M60 46c-5-37 64-44 75 1"/><path d="M45 166l21 8 10-19m62 11-23 8-9-19M72 33c-13 3-19 10-21 23"/></g><circle cx="70" cy="80" r="2.4" fill="#103B86"/><circle cx="110" cy="80" r="2.4" fill="#103B86"/></svg><div class="bl-art-label">BLUE IS MY COLOR.<br><small>KEEP YOUR OWN PACE ↗</small></div></div>
+          <div class="bl-weather"><div class="bl-weather-label"><span class="bl-live-dot"></span> TAINAN WEATHER <small>CWA 氣象署 · 台南站 467410</small></div><div class="bl-weather-main"><span id="weatherCircleIcon">☀️</span><strong id="widgetApparentTemp">--</strong><span class="bl-weather-unit">°C</span></div><div class="bl-weather-meta"><span>相對濕度 <b id="widgetHumidity">-- %</b></span><span>天氣狀況 <b id="widgetUV">--</b></span></div></div>
         </header>
+        <div class="bl-section-intro"><span>MY DASHBOARD <small>今日生活總覽</small></span><span>SCROLL TO EXPLORE ↓</span></div>
 
         <!-- MAIN DASHBOARD GRID -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
             <!-- 1. Course Focus -->
             <div class="lg:col-span-6">
+                <div class="bl-card-index"><span>01 / STUDY & PLANS</span><small>学びの記録</small></div>
                 <div class="bg-muji-k90 text-white p-7 rounded-[32px] shadow-floating relative overflow-hidden space-y-6">
                     <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -248,6 +239,7 @@
 
             <!-- 3. 機車保養紀錄 -->
             <div class="lg:col-span-6">
+                <div class="bl-card-index"><span>02 / EVERYDAY LIFE</span><small>暮らしのこと</small></div>
                 <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-5">
                     <div class="border-b border-muji-border pb-3 space-y-1.5">
                         <div class="flex items-center justify-between">
@@ -305,6 +297,7 @@
 
             <!-- 4. 庫存股票市值 -->
             <div class="lg:col-span-6">
+                <div class="bl-card-index"><span>03 / MONEY & GROWTH</span><small>お金のこと</small></div>
                 <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-5">
                     <div class="flex items-center justify-between border-b border-muji-border pb-3">
                         <div class="flex items-center gap-2">
@@ -499,6 +492,7 @@
 
             <!-- 8. 薪資所得試算 -->
             <div class="lg:col-span-12">
+                <div class="bl-card-index"><span>04 / WORK & REWARD</span><small>仕事と暮らし</small></div>
                 <div class="bg-muji-card p-7 rounded-[32px] border border-muji-border shadow-soft space-y-6">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-muji-border pb-4">
                         <div class="flex items-center gap-2.5">
@@ -1498,7 +1492,7 @@
 
             if (summaryCard) {
                 if (totalProfit > 0) {
-                    summaryCard.className = 'bg-[#C83B2B] text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
+                    summaryCard.className = 'bg-[#C84C66] text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
                 } else if (totalProfit < 0) {
                     summaryCard.className = 'bg-[#2D5A3F] text-white p-6 rounded-[28px] shadow-sm space-y-5 relative overflow-hidden smooth-transition';
                 } else {
@@ -1514,7 +1508,7 @@
             let html = '';
             stocks.forEach(stk => {
                 const isPositive = (stk.itemProfit || 0) >= 0;
-                const profitBadgeColor = isPositive ? 'bg-[#C83B2B] text-white' : 'bg-[#2D5A3F] text-white';
+                const profitBadgeColor = isPositive ? 'bg-[#C84C66] text-white' : 'bg-[#2D5A3F] text-white';
                 const profitSign = isPositive ? '+' : '';
 
                 let priceVal = stk.price || stk.currentPrice;
